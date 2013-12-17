@@ -6,7 +6,7 @@ ReadSharp was previously **PocketSharp.Reader** and is now hosted without the [P
 
 The library extracts the main content of a website and returns the extracted content as HTML and it's associated title, as well as other useful content (images, icons, ...).
 
-This content can be encapsulated in a <body>-Tag and displayed as a readable website with a custom CSS (it's up to you!).
+This content can be encapsulated in a `<body>`-Tag and displayed as a readable website with a custom CSS (it's up to you!).
 
 ---
 
