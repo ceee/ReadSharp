@@ -8,7 +8,7 @@ namespace ReadSharp.Models
   /// Readable article
   /// </summary>
   [ImplementPropertyChanged]
-  public class PocketArticle
+  public class Article
   {
     /// <summary>
     /// Gets or sets the content.
@@ -24,7 +24,7 @@ namespace ReadSharp.Models
     /// <value>
     /// The images.
     /// </value>
-    public List<PocketArticleImage> Images { get; set; }
+    public List<ArticleImage> Images { get; set; }
 
     /// <summary>
     /// Gets or sets the title.

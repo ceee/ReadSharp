@@ -7,7 +7,7 @@ namespace ReadSharp.Models
   /// Article image
   /// </summary>
   [ImplementPropertyChanged]
-  public class PocketArticleImage
+  public class ArticleImage
   {
     /// <summary>
     /// Gets or sets the URI.

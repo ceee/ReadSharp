@@ -13,7 +13,7 @@ namespace ReadSharp
   /// <summary>
   /// PocketReader
   /// </summary>
-  public class PocketReader : IPocketReader
+  public class Reader : IReader
   {
     /// <summary>
     /// Used UserAgent for HTTP request
@@ -27,12 +27,12 @@ namespace ReadSharp
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PocketReader" /> class.
+    /// Initializes a new instance of the <see cref="Reader" /> class.
     /// </summary>
     /// <param name="userAgent">Custom UserAgent string.</param>
     /// <param name="handler">The HttpMessage handler.</param>
     /// <param name="timeout">Request timeout (in seconds).</param>
-    public PocketReader(string userAgent = null, HttpMessageHandler handler = null, int? timeout = null)
+    public Reader(string userAgent = null, HttpMessageHandler handler = null, int? timeout = null)
     {
       // override user agent
       if (!string.IsNullOrEmpty(userAgent))
@@ -65,18 +65,16 @@ namespace ReadSharp
 
 
     /// <summary>
-    /// Reads article content from the given PocketItem.
-    /// This method does not use the official Article View API, which is private.
-    /// The PocketReader is based on a custom PCL port of NReadability and SgmlReader.
+    /// Reads article content from the given URI.
     /// </summary>
     /// <param name="uri">An URI to extract the content from.</param>
     /// <param name="bodyOnly">if set to <c>true</c> [only body is returned].</param>
     /// <param name="noHeadline">if set to <c>true</c> [no headline (h1) is included].</param>
     /// <returns>
-    /// A Pocket article with extracted content and title.
+    /// An article with extracted content and meta information.
     /// </returns>
     /// <exception cref="Exception"></exception>
-    public async Task<PocketArticle> Read(Uri uri, bool bodyOnly = true, bool noHeadline = false)
+    public async Task<Article> Read(Uri uri, bool bodyOnly = true, bool noHeadline = false)
     {
       // initialize transcoder
       NReadabilityTranscoder transcoder = new NReadabilityTranscoder(
@@ -111,12 +109,12 @@ namespace ReadSharp
       TranscodingResult transcodingResult = transcoder.Transcode(transcodingInput);
 
       // get images from article
-      List<PocketArticleImage> images = transcodingResult.Images.Select<XElement, PocketArticleImage>(image =>
+      List<ArticleImage> images = transcodingResult.Images.Select<XElement, ArticleImage>(image =>
       {
         Uri imageUri;
         Uri.TryCreate(image.GetAttributeValue("src", null), UriKind.Absolute, out imageUri);
 
-        return new PocketArticleImage()
+        return new ArticleImage()
         {
           Uri = imageUri,
           Title = image.GetAttributeValue("title", null),
@@ -125,7 +123,7 @@ namespace ReadSharp
       }).ToList();
 
       // create article
-      return new PocketArticle()
+      return new Article()
       {
         Content = transcodingResult.ExtractedContent,
         Images = images,
