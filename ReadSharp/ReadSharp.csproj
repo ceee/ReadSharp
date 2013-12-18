@@ -14,7 +14,8 @@
     <TargetFrameworkProfile>Profile96</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <FodyPath>..\packages\Fody.1.19.1.0</FodyPath>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,7 +36,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="Fody.targets" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -51,10 +51,6 @@
     </Reference>
     <Reference Include="Microsoft.Threading.Tasks.Extensions">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.165\lib\portable-net40+sl4+win8+wp71\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="PropertyChanged">
-      <HintPath>..\packages\PropertyChanged.Fody.1.43.1.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\PropertyChanged.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System.IO">
       <HintPath>..\packages\Microsoft.Bcl.1.1.6\lib\portable-net40+sl4+win8+wp71\System.IO.dll</HintPath>
@@ -76,9 +72,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\PortablePorts\NReadability\NReadability.csproj">
       <Project>{14c3ee6a-54a4-4a37-8b56-d52a3802f1c2}</Project>
       <Name>NReadability</Name>
@@ -90,7 +83,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.13\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
     <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.13\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
-  <Import Project="Fody.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

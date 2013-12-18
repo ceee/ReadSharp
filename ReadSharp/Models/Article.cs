@@ -1,5 +1,4 @@
-﻿using PropertyChanged;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ReadSharp
@@ -7,7 +6,6 @@ namespace ReadSharp
   /// <summary>
   /// Readable article
   /// </summary>
-  [ImplementPropertyChanged]
   public class Article
   {
     /// <summary>

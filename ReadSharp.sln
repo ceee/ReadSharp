@@ -11,6 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PortablePorts", "PortablePo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadSharp.Tests", "ReadSharp.Tests\ReadSharp.Tests.csproj", "{21E0B36F-4829-4044-A7D4-8C27F1D16FB2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{43FC7986-6B67-4FD2-8508-097A90A8BBDC}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

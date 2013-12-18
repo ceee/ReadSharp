@@ -1,12 +1,10 @@
-﻿using PropertyChanged;
-using System;
+﻿using System;
 
 namespace ReadSharp
 {
   /// <summary>
   /// Article image
   /// </summary>
-  [ImplementPropertyChanged]
   public class ArticleImage
   {
     /// <summary>
