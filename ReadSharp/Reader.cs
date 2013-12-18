@@ -59,7 +59,7 @@ namespace ReadSharp
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip,deflate");
 
       // add user agent
-      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", string.Format(_userAgent, "; ReadSharp/3.0"));
+      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", string.Format(_userAgent, "; ReadSharp/4.0"));
     }
 
 
