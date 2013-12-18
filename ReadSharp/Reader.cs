@@ -1,5 +1,4 @@
-﻿using ReadSharp.Models;
-using ReadSharp.Ports.NReadability;
+﻿using ReadSharp.Ports.NReadability;
 using System;
 using System.Collections.Generic;
 using System.Linq;

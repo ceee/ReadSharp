@@ -1,5 +1,4 @@
-﻿using ReadSharp.Models;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Xunit;
 

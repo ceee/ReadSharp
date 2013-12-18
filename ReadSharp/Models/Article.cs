@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ReadSharp.Models
+namespace ReadSharp
 {
   /// <summary>
   /// Readable article

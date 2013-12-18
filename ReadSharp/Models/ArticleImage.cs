@@ -1,7 +1,7 @@
 ﻿using PropertyChanged;
 using System;
 
-namespace ReadSharp.Models
+namespace ReadSharp
 {
   /// <summary>
   /// Article image
