@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://raw.github.com/ceee/ReadSharp/master/LICENSE-MIT</licenseUrl>
+    <projectUrl>https://github.com/ceee/ReadSharp</projectUrl>
+    <iconUrl>https://raw.github.com/ceee/ReadSharp/master/Assets/readsharp.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      <![CDATA[
+        ReadSharp is a PCL that extracts the main (meaningful) content of a website and returns the extracted content as HTML and it's associated title, as well as other useful information (images, icons, ...).
+      ]]>
+    </description>
+    <language>en-US</language>
+    <releaseNotes>
+      <![CDATA[
+        For full release notes see https://github.com/ceee/ReadSharp/blob/master/CHANGELOG.md
+      ]]>
+    </releaseNotes>
+    <copyright>Copyright by cee, 2013</copyright>
+    <tags>ReadSharp PocketAPI Pocket PocketSharp Tobias Klika cee NReadability SgmlReader Reader Article SDK Poki</tags>
+  </metadata>
+</package>
