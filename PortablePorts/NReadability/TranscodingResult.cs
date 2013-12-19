@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
@@ -20,6 +21,12 @@ namespace ReadSharp.Ports.NReadability
     public string ExtractedTitle { get; set; }
 
     public string NextPageUrl { get; set; }
+
+    public string ExtractedDescription { get; set; }
+
+    public Uri ExtractedImage { get; set; }
+
+    public Uri ExtractedFavicon { get; set; }
 
     public XDocument RawDocument { get; set; }
 

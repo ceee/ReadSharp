@@ -49,6 +49,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="HtmlUtils.cs" />
     <Compile Include="InternalErrorException.cs" />
+    <Compile Include="MetaExtractor.cs" />
     <Compile Include="NReadabilityTranscoder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SgmlDomBuilder.cs" />

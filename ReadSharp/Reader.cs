@@ -68,7 +68,7 @@ namespace ReadSharp
     /// </summary>
     /// <param name="uri">An URI to extract the content from.</param>
     /// <param name="bodyOnly">if set to <c>true</c> [only body is returned].</param>
-    /// <param name="noHeadline">if set to <c>true</c> [no headline (h1) is included].</param>
+    /// <param name="noHeadline">if set to <c>true</c> [no headline (h1) is included in generated HTML].</param>
     /// <returns>
     /// An article with extracted content and meta information.
     /// </returns>
@@ -124,9 +124,12 @@ namespace ReadSharp
       // create article
       return new Article()
       {
-        Content = transcodingResult.ExtractedContent,
-        Images = images,
         Title = transcodingResult.ExtractedTitle,
+        Description = transcodingResult.ExtractedDescription,
+        Content = transcodingResult.ExtractedContent,
+        FrontImage = transcodingResult.ExtractedImage,
+        Images = images,
+        Favicon = transcodingResult.ExtractedFavicon,
         NextPage = transcodingResult.NextPageUrl != null ? new Uri(transcodingResult.NextPageUrl, UriKind.Absolute) : null
       };
     }

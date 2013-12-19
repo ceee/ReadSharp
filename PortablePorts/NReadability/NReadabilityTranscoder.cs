@@ -159,6 +159,7 @@ namespace ReadSharp.Ports.NReadability
 
     private Func<AttributeTransformationInput, AttributeTransformationResult> _imageSourceTranformer;
     private Func<AttributeTransformationInput, AttributeTransformationResult> _anchorHrefTransformer;
+    private Func<AttributeTransformationInput, AttributeTransformationResult> _metaTransformer;
 
     #endregion
 
@@ -249,11 +250,38 @@ namespace ReadSharp.Ports.NReadability
 
       bool titleExtracted = !string.IsNullOrEmpty(extractedTitle);
 
+      MetaExtractor metaExtractor = new MetaExtractor(transcodedXmlDocument);
+
+      string description = null;
+      Uri image = null;
+      Uri favicon = null;
+
+      if (metaExtractor.HasValue)
+      {
+        description = metaExtractor.GetMetaDescription();
+        string imageString = metaExtractor.GetMetaImage();
+        string faviconString = metaExtractor.GetMetaFavicon();
+
+        if (imageString != null)
+        {
+          imageString = ResolveElementUrl(imageString, transcodingInput.Url);
+          Uri.TryCreate(imageString, UriKind.Absolute, out image);
+        }
+        if (faviconString != null)
+        {
+          faviconString = ResolveElementUrl(faviconString, transcodingInput.Url);
+          Uri.TryCreate(faviconString, UriKind.Absolute, out favicon);
+        }
+      }
+
       return
         new TranscodingResult(contentExtracted, titleExtracted)
           {
             ExtractedContent = transcodedContent,
             ExtractedTitle = extractedTitle,
+            ExtractedDescription = description,
+            ExtractedFavicon = favicon,
+            ExtractedImage = image,
             NextPageUrl = nextPageUrl,
             Images = images
           };
@@ -1833,6 +1861,13 @@ namespace ReadSharp.Ports.NReadability
     {
       get { return _anchorHrefTransformer; }
       set { _anchorHrefTransformer = value; }
+    }
+
+
+    public Func<AttributeTransformationInput, AttributeTransformationResult> MetaTranformer
+    {
+      get { return _metaTransformer; }
+      set { _metaTransformer = value; }
     }
 
     #endregion
