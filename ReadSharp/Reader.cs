@@ -105,7 +105,6 @@ namespace ReadSharp
 
       Encoding encoding = GetEncodingFromString(transcodingResult.Charset);
 
-
       // extract again if encoding didn't match or failed to retrieve
       if (encoding != null && (
         String.IsNullOrEmpty(response.Charset)
