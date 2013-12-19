@@ -4,11 +4,47 @@ ReadSharp was previously **PocketSharp.Reader** and is now hosted without the [P
 
 ## What's it all about?
 
-The library extracts the main content of a website and returns the extracted content as HTML and it's associated title, as well as other useful content (images, icons, ...).
+The library extracts the main content of a website and returns the extracted content as HTML and it's associated title, description, favicon and a all included images.
 
 This content can be encapsulated in a `<body>`-Tag and displayed as a readable website with a custom CSS (it's up to you!).
 
+ReadSharp is based on a custom PCL port of NReadability and SgmlReader, which are included in the solution.
+
+#### Association with Pocket
+
+This library is a replacement for the Article View API by Pocket, which is not only limited by usage and privacy, but also in it's way of extracting contents from websites. 
+
 ---
+
+## Example
+
+```csharp
+using ReadSharp;
+
+Reader reader = new Reader();
+Article article;
+
+try
+{
+  article = await reader.Read("http://frontendplay.com/story/4/http-caching-demystified-part-2-implementation");
+}
+catch (Exception exc)
+{
+  // handle exception
+}
+```
+
+## Article Model
+
+The `Article` contains following fields:
+
+- `string` **Title** (the title of the page)
+- `string` **Description** (description of the page, extracted from meta information)
+- `string` **Content** (contains the article)
+- `Uri` **FrontImage** (main page image extracted from meta tags like apple-touch-icon and others)
+- `Uri` **Favicon** (the favicon of the page)
+- `List<ArticleImage>` **Images** (contains all images found in the text)
+- `string` **NextPage** (contains the next page URI, if available)
 
 
 ## Supported platforms

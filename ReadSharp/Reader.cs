@@ -60,7 +60,7 @@ namespace ReadSharp
 
       // add user agent
       string version = Assembly.GetExecutingAssembly().FullName.Split(',')[1].Split('=')[1];
-      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", string.Format(_userAgent, "; ReadSharp/" + version));
+      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", String.Format(_userAgent, "; ReadSharp/" + version));
     }
 
 
