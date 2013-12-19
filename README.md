@@ -4,15 +4,17 @@ ReadSharp was previously **PocketSharp.Reader** and is now hosted without the [P
 
 ## What's it all about?
 
-The library extracts the main content of a website and returns the extracted content as HTML and it's associated title, description, favicon and a all included images.
+The library extracts the main content of a website and returns the article as HTML with it's associated title, description, favicon and all included images.
 
-This content can be encapsulated in a `<body>`-Tag and displayed as a readable website with a custom CSS (it's up to you!).
+The content can be encapsulated in a `<body>`-Tag and displayed as a readable website with a custom CSS (it's up to you!).
 
 ReadSharp is based on a custom PCL port of NReadability and SgmlReader, which are included in the solution.
 
 #### Association with Pocket
 
-This library is a replacement for the Article View API by Pocket, which is not only limited by usage and privacy, but also in it's way of extracting contents from websites. 
+This library is a replacement for the Article View API by Pocket which is  limited by usage and privacy.
+
+With ReadSharp you won't hit any usage limits, as you are extracting the content directly. And it's open source.
 
 ---
 
