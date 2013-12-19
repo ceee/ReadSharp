@@ -1,10 +1,12 @@
 ﻿using ReadSharp.Ports.NReadability;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -25,6 +27,12 @@ namespace ReadSharp
     /// </summary>
     protected readonly HttpClient _httpClient;
 
+    /// <summary>
+    /// The NReadability transcoder
+    /// </summary>
+    protected NReadabilityTranscoder _transcoder;
+
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Reader" /> class.
@@ -34,6 +42,16 @@ namespace ReadSharp
     /// <param name="timeout">Request timeout (in seconds).</param>
     public Reader(string userAgent = null, HttpMessageHandler handler = null, int? timeout = null)
     {
+      // initialize transcoder
+      _transcoder = new NReadabilityTranscoder(
+        dontStripUnlikelys: false,
+        dontNormalizeSpacesInTextContent: true,
+        dontWeightClasses: false,
+        readingStyle: ReadingStyle.Ebook,
+        readingMargin: ReadingMargin.Narrow,
+        readingSize: ReadingSize.Medium
+      );
+
       // override user agent
       if (!string.IsNullOrEmpty(userAgent))
       {
@@ -58,6 +76,8 @@ namespace ReadSharp
       // add accepted encodings
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip,deflate");
 
+      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "UTF-8");
+
       // add user agent
       string version = Assembly.GetExecutingAssembly().FullName.Split(',')[1].Split('=')[1];
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", String.Format(_userAgent, "; ReadSharp/" + version));
@@ -77,37 +97,23 @@ namespace ReadSharp
     /// <exception cref="Exception"></exception>
     public async Task<Article> Read(Uri uri, bool bodyOnly = true, bool noHeadline = false)
     {
-      // initialize transcoder
-      NReadabilityTranscoder transcoder = new NReadabilityTranscoder(
-        dontStripUnlikelys: false,
-        dontNormalizeSpacesInTextContent: true,
-        dontWeightClasses: false,
-        readingStyle: ReadingStyle.Ebook,
-        readingMargin: ReadingMargin.Narrow,
-        readingSize: ReadingSize.Medium
-      );
-
       // get HTML string from URI
-      string htmlResponse = await Request(uri);
+      Response response = await Request(uri);
 
-      // set properties for processing
-      TranscodingInput transcodingInput = new TranscodingInput(htmlResponse)
+      // readability
+      TranscodingResult transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline);
+
+      Encoding encoding = GetEncodingFromString(transcodingResult.Charset);
+
+
+      // extract again if encoding didn't match or failed to retrieve
+      if (encoding != null && (
+        String.IsNullOrEmpty(response.Charset)
+        ||
+        !String.Equals(response.Charset, transcodingResult.Charset, StringComparison.OrdinalIgnoreCase)))
       {
-        Url = uri.ToString(),
-        DomSerializationParams = new DomSerializationParams()
-        {
-          BodyOnly = bodyOnly,
-          NoHeadline = noHeadline,
-          PrettyPrint = true,
-          DontIncludeContentTypeMetaElement = true,
-          DontIncludeMobileSpecificMetaElements = true,
-          DontIncludeDocTypeMetaElement = false,
-          DontIncludeGeneratorMetaElement = true
-        }
-      };
-
-      // process/transcode HTML
-      TranscodingResult transcodingResult = transcoder.Transcode(transcodingInput);
+        transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline, encoding);
+      }
 
       // get images from article
       List<ArticleImage> images = transcodingResult.Images.Select<XElement, ArticleImage>(image =>
@@ -139,11 +145,54 @@ namespace ReadSharp
 
 
     /// <summary>
+    /// Extracts the readable information.
+    /// </summary>
+    /// <param name="uri">The URI.</param>
+    /// <param name="textStream">The text stream.</param>
+    /// <param name="bodyOnly">if set to <c>true</c> [body only].</param>
+    /// <param name="noHeadline">if set to <c>true</c> [no headline].</param>
+    /// <returns></returns>
+    protected TranscodingResult ExtractReadableInformation(
+      Uri uri,
+      Stream textStream,
+      bool bodyOnly = true,
+      bool noHeadline = false,
+      Encoding encoding = null)
+    {
+
+      // response stream to text
+      textStream.Position = 0;
+      StreamReader streamReader = new StreamReader(textStream, encoding ?? Encoding.UTF8);
+      string text = streamReader.ReadToEnd();
+
+      // set properties for processing
+      TranscodingInput transcodingInput = new TranscodingInput(text)
+      {
+        Url = uri.ToString(),
+        DomSerializationParams = new DomSerializationParams()
+        {
+          BodyOnly = bodyOnly,
+          NoHeadline = noHeadline,
+          PrettyPrint = true,
+          DontIncludeContentTypeMetaElement = true,
+          DontIncludeMobileSpecificMetaElements = true,
+          DontIncludeDocTypeMetaElement = false,
+          DontIncludeGeneratorMetaElement = true
+        }
+      };
+
+      // process/transcode HTML
+      return _transcoder.Transcode(transcodingInput);
+    }
+
+
+
+    /// <summary>
     /// Fetches a resource
     /// </summary>
     /// <param name="uri">The URI.</param>
     /// <returns></returns>
-    protected async Task<string> Request(Uri uri)
+    private async Task<Response> Request(Uri uri)
     {
       HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
       HttpResponseMessage response = null;
@@ -167,7 +216,40 @@ namespace ReadSharp
       }
 
       // read response
-      return await response.Content.ReadAsStringAsync();
+      Stream responseStream = await response.Content.ReadAsStreamAsync();
+
+      return new Response()
+      {
+        Stream = responseStream,
+        Charset = response.Content.Headers.ContentType.CharSet
+      };
+    }
+
+
+    /// <summary>
+    /// Gets the encoding from string.
+    /// </summary>
+    /// <param name="encoding">The encoding.</param>
+    /// <returns></returns>
+    private Encoding GetEncodingFromString(string encoding)
+    {
+      Encoding correctEncoding;
+
+      if (String.IsNullOrEmpty(encoding))
+      {
+        return null;
+      }
+
+      try
+      {
+        correctEncoding = Encoding.GetEncoding(encoding);
+      }
+      catch
+      {
+        return null;
+      }
+
+      return correctEncoding;
     }
   }
 }

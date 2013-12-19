@@ -28,6 +28,8 @@ namespace ReadSharp.Ports.NReadability
 
     public Uri ExtractedFavicon { get; set; }
 
+    public string Charset { get; set; }
+
     public XDocument RawDocument { get; set; }
 
     public IEnumerable<XElement> Images { get; set; }

@@ -104,21 +104,63 @@ namespace ReadSharp.Ports.NReadability
 
 
     /// <summary>
+    /// Gets the charset.
+    /// </summary>
+    /// <returns></returns>
+    public string GetCharset()
+    {
+      // find: <meta charset="utf-8">
+      string result = SearchCandidates(new Dictionary<string, string>()
+      {
+        { "charset", "charset" }
+      }, true);
+
+      if (String.IsNullOrEmpty(result))
+      {
+        // find: <meta http-equiv="Content-Type" content="text/html; charset=windows-1250">
+        result = SearchCandidates(new Dictionary<string, string>()
+        {
+          { "http-equiv|Content-Type", "content" }
+        });
+
+        int charsetStart = result.IndexOf("charset=");
+        if (charsetStart > 0)
+        {
+          charsetStart += 8;
+          result = result.Substring(charsetStart, result.Length - charsetStart);
+        }
+      }
+
+      return String.IsNullOrEmpty(result) ? null : result.ToUpper();
+    }
+
+
+    /// <summary>
     /// Searches the candidates.
     /// </summary>
     /// <param name="candidates">The candidates.</param>
     /// <returns></returns>
-    private string SearchCandidates(Dictionary<string, string> candidates)
+    private string SearchCandidates(Dictionary<string, string> candidates, bool simple = false)
     {
       string result = null;
 
       foreach (var candidate in candidates)
       {
+        XElement element;
         string[] type = candidate.Key.Split('|');
 
-        XElement element = Tags
-          .Where(item => String.Equals(item.GetAttributeValue(type[0], null), type[1], StringComparison.OrdinalIgnoreCase))
-          .FirstOrDefault();
+        if (simple)
+        {
+          element = Tags
+            .Where(item => item.GetAttributeValue(type[0], null) != null)
+            .FirstOrDefault();
+        }
+        else
+        {
+          element = Tags
+            .Where(item => String.Equals(item.GetAttributeValue(type[0], null), type[1], StringComparison.OrdinalIgnoreCase))
+            .FirstOrDefault();
+        }
 
         if (element != null)
         {

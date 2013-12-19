@@ -252,12 +252,14 @@ namespace ReadSharp.Ports.NReadability
 
       MetaExtractor metaExtractor = new MetaExtractor(transcodedXmlDocument);
 
+      string charset = null;
       string description = null;
       Uri image = null;
       Uri favicon = null;
 
       if (metaExtractor.HasValue)
       {
+        charset = metaExtractor.GetCharset();
         description = metaExtractor.GetMetaDescription();
         string imageString = metaExtractor.GetMetaImage();
         string faviconString = metaExtractor.GetMetaFavicon();
@@ -283,6 +285,7 @@ namespace ReadSharp.Ports.NReadability
             ExtractedFavicon = favicon,
             ExtractedImage = image,
             NextPageUrl = nextPageUrl,
+            Charset = charset,
             Images = images
           };
     }

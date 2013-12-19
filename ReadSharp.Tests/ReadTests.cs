@@ -73,5 +73,27 @@ namespace ReadSharp.Tests
 
       Assert.True(result.Content.Substring(0, 4) == "<div");
     }
+
+
+    [Fact]
+    public async Task TestCzechCharsets()
+    {
+      string expectedTitle = "Kouzelné české Vánoce";
+      Article result = await reader.Read(new Uri("http://www.czech.cz/cz/Zivot-a-prace/Jak-se-zije-v-CR/Zvyky-a-tradice/Kouzelne-ceske-Vanoce"));
+      Assert.Equal(result.Title, expectedTitle);
+
+      expectedTitle = "Kolik se dá vydělat na volné noze?";
+      result = await reader.Read(new Uri("http://navolnenoze.cz/blog/vydelky/"));
+      Assert.Equal(result.Title, expectedTitle);
+    }
+
+
+    [Fact]
+    public async Task TestDifferentCharsets()
+    {
+      string expectedTitle = "优艺客-专注互联网品牌建设-原韩雪冬网页设计工作室（公司站）";
+      Article result = await reader.Read(new Uri("http://www.uelike.com"));
+      Assert.Equal(result.Title, expectedTitle);
+    }
   }
 }
