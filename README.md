@@ -2,6 +2,13 @@
 
 ReadSharp was previously **PocketSharp.Reader** and is now hosted without the [PocketSharp](https://github.com/ceee/PocketSharp) dependency.
 
+## Install ReadSharp using [NuGet](https://www.nuget.org/packages/ReadSharp/)
+
+```
+Install-Package ReadSharp
+```
+
+
 ## What's it all about?
 
 The library extracts the main content of a website and returns the article as HTML with it's associated title, description, favicon and all included images.
