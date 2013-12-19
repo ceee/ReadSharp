@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -58,7 +59,8 @@ namespace ReadSharp
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip,deflate");
 
       // add user agent
-      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", string.Format(_userAgent, "; ReadSharp/4.0"));
+      string version = Assembly.GetExecutingAssembly().FullName.Split(',')[1].Split('=')[1];
+      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", string.Format(_userAgent, "; ReadSharp/" + version));
     }
 
 
