@@ -55,6 +55,11 @@ The `Article` contains following fields:
 - `List<ArticleImage>` **Images** (contains all images found in the text)
 - `string` **NextPage** (contains the next page URI, if available)
 
+### Article Image
+
+- `Uri` **Uri**
+- `string` **Title** (extracted from the title attribute)
+- `string` **AlternativeText** (extracted from the alt attribute)
 
 ## Supported platforms
 
