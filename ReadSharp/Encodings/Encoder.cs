@@ -12,16 +12,41 @@ namespace ReadSharp.Encodings
     /// </summary>
     private static Dictionary<string, string> customEncodings = new Dictionary<string, string>()
     {
-      { "windows-1250", "Windows1250" }
+      { "windows-1250", "Windows1250" },
+      { "windows-1251", "Windows1251" },
+      { "windows-1252", "Windows1252" },
+      { "windows-1253", "Windows1253" },
+      { "windows-1254", "Windows1254" },
+      { "windows-1255", "Windows1255" },
+      { "windows-1256", "Windows1256" },
+      { "windows-1257", "Windows1257" },
+      { "windows-1258", "Windows1258" },
+      { "iso-8859-1", "Iso88591" },
+      { "iso-8859-2", "Iso88592" },
+      { "iso-8859-3", "Iso88593" },
+      { "iso-8859-4", "Iso88594" },
+      { "iso-8859-5", "Iso88595" },
+      { "iso-8859-6", "Iso88596" },
+      { "iso-8859-7", "Iso88597" },
+      { "iso-8859-8", "Iso88598" },
+      { "iso-8859-9", "Iso88599" },
+      { "iso-8859-13", "Iso885913" },
+      { "iso-8859-15", "Iso885915" }
     };
+
+
+    /// <summary>
+    /// try custom encoder
+    /// </summary>
+    private bool tryCustomEncoder;
 
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Encoder"/> class.
     /// </summary>
-    public Encoder()
+    public Encoder(bool tryCustomEncoder = false)
     {
-
+      this.tryCustomEncoder = tryCustomEncoder;
     }
 
 
@@ -50,7 +75,7 @@ namespace ReadSharp.Encodings
         finally
         {
           // use a custom encoder
-          if (correctEncoding == null)
+          if (tryCustomEncoder && correctEncoding == null)
           {
             try
             {

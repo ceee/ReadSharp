@@ -59,7 +59,7 @@ namespace ReadSharp
       );
 
       // initialize custom encoder
-      _encoder = new Encodings.Encoder();
+      _encoder = new Encodings.Encoder(true);
 
       // override user agent
       if (!string.IsNullOrEmpty(userAgent))

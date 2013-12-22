@@ -40,7 +40,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encodings\Encoder.cs" />
+    <Compile Include="Encodings\Iso88591.cs" />
+    <Compile Include="Encodings\Iso885913.cs" />
+    <Compile Include="Encodings\Iso885915.cs" />
+    <Compile Include="Encodings\Iso88592.cs" />
+    <Compile Include="Encodings\Iso88593.cs" />
+    <Compile Include="Encodings\Iso88594.cs" />
+    <Compile Include="Encodings\Iso88595.cs" />
+    <Compile Include="Encodings\Iso88596.cs" />
+    <Compile Include="Encodings\Iso88597.cs" />
+    <Compile Include="Encodings\Iso88598.cs" />
+    <Compile Include="Encodings\Iso88599.cs" />
     <Compile Include="Encodings\Windows1250.cs" />
+    <Compile Include="Encodings\Windows1251.cs" />
+    <Compile Include="Encodings\Windows1252.cs" />
+    <Compile Include="Encodings\Windows1253.cs" />
+    <Compile Include="Encodings\Windows1254.cs" />
+    <Compile Include="Encodings\Windows1255.cs" />
+    <Compile Include="Encodings\Windows1256.cs" />
+    <Compile Include="Encodings\Windows1257.cs" />
+    <Compile Include="Encodings\Windows1258.cs" />
     <Compile Include="IReader.cs" />
     <Compile Include="Models\Article.cs" />
     <Compile Include="Models\ArticleImage.cs" />
