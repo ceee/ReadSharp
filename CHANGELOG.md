@@ -1,3 +1,7 @@
+### 4.2.0
+
+- use custom encoders if not supported on platform (implemented for ISO-8859 and Windows range).
+
 ### 4.1.0
 
 - extract description, favicon and front image from meta tags

@@ -247,33 +247,5 @@ namespace ReadSharp
         Charset = response.Content.Headers.ContentType.CharSet
       };
     }
-
-
-    /// <summary>
-    /// Gets the encoding from string.
-    /// </summary>
-    /// <param name="encoding">The encoding.</param>
-    /// <returns></returns>
-    private Encoding GetEncodingFromString(string encoding)
-    {
-      Encoding correctEncoding;
-      //System.Activator.CreateInstance(Type.GetType("Class1"));
-
-      if (String.IsNullOrEmpty(encoding))
-      {
-        return null;
-      }
-
-      try
-      {
-        correctEncoding = Encoding.GetEncoding(encoding);
-      }
-      catch
-      {
-        return null;
-      }
-
-      return correctEncoding;
-    }
   }
 }
