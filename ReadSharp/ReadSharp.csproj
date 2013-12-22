@@ -39,6 +39,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encodings\Encoder.cs" />
+    <Compile Include="Encodings\Windows1250.cs" />
     <Compile Include="IReader.cs" />
     <Compile Include="Models\Article.cs" />
     <Compile Include="Models\ArticleImage.cs" />

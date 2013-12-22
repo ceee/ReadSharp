@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+
 namespace ReadSharp
 {
   /// <summary>
@@ -26,6 +27,11 @@ namespace ReadSharp
     /// REST client used for HTML retrieval
     /// </summary>
     protected readonly HttpClient _httpClient;
+
+    /// <summary>
+    /// The encoder
+    /// </summary>
+    protected readonly Encodings.Encoder _encoder;
 
     /// <summary>
     /// The NReadability transcoder
@@ -52,6 +58,9 @@ namespace ReadSharp
         readingSize: ReadingSize.Medium
       );
 
+      // initialize custom encoder
+      _encoder = new Encodings.Encoder();
+
       // override user agent
       if (!string.IsNullOrEmpty(userAgent))
       {
@@ -76,7 +85,7 @@ namespace ReadSharp
       // add accepted encodings
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip,deflate");
 
-      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "UTF-8");
+      //_httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "UTF-8");
 
       // add user agent
       string version = Assembly.GetExecutingAssembly().FullName.Split(',')[1].Split('=')[1];
@@ -97,13 +106,29 @@ namespace ReadSharp
     /// <exception cref="Exception"></exception>
     public async Task<Article> Read(Uri uri, bool bodyOnly = true, bool noHeadline = false)
     {
+      HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+      HttpResponseMessage respo = null;
+
+      // make async request
+      try
+      {
+        respo = await _httpClient.SendAsync(request);
+      }
+      catch (HttpRequestException exc)
+      {
+        throw new Exception(exc.Message, exc);
+      }
+
+      // read response
+      string resp = await respo.Content.ReadAsStringAsync();
+
       // get HTML string from URI
       Response response = await Request(uri);
 
       // readability
       TranscodingResult transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline);
 
-      Encoding encoding = GetEncodingFromString(transcodingResult.Charset);
+      Encoding encoding = _encoder.GetEncodingFromString(transcodingResult.Charset);
 
       // extract again if encoding didn't match or failed to retrieve
       if (encoding != null && (
@@ -158,7 +183,6 @@ namespace ReadSharp
       bool noHeadline = false,
       Encoding encoding = null)
     {
-
       // response stream to text
       textStream.Position = 0;
       StreamReader streamReader = new StreamReader(textStream, encoding ?? Encoding.UTF8);
@@ -233,6 +257,7 @@ namespace ReadSharp
     private Encoding GetEncodingFromString(string encoding)
     {
       Encoding correctEncoding;
+      //System.Activator.CreateInstance(Type.GetType("Class1"));
 
       if (String.IsNullOrEmpty(encoding))
       {
