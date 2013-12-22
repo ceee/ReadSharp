@@ -37,22 +37,40 @@ namespace ReadSharp.Encodings
 
       if (!String.IsNullOrEmpty(encoding))
       {
+        // try get encoding from string
         try
         {
           correctEncoding = Encoding.GetEncoding(encoding);
-          throw new Exception();
         }
-        catch
+        catch (ArgumentException)
         {
-          KeyValuePair<string, string> customEncoder = customEncodings.FirstOrDefault(item => item.Key == encoding.ToLower());
+          // encoding not found in environment
+          // handled in finally block as it could also generate null without throwing exceptions
+        }
+        finally
+        {
+          // use a custom encoder
+          if (correctEncoding == null)
+          {
+            try
+            {
+              KeyValuePair<string, string> customEncoder = customEncodings.FirstOrDefault(item => item.Key == encoding.ToLower());
 
-          if (!String.IsNullOrEmpty(customEncoder.Value))
-          {
-            correctEncoding = (Encoding)System.Activator.CreateInstance(Type.GetType("ReadSharp.Encodings." + customEncoder.Value));
-          }
-          else
-          {
-            correctEncoding = null;
+              if (!String.IsNullOrEmpty(customEncoder.Value))
+              {
+                Type encoderType = Type.GetType("ReadSharp.Encodings." + customEncoder.Value);
+
+                if (encoderType != null)
+                {
+                  correctEncoding = (Encoding)System.Activator.CreateInstance(Type.GetType("ReadSharp.Encodings." + customEncoder.Value));
+                }
+              }
+            }
+            catch (Exception)
+            {
+              // couldn't create instance for whatever reason.
+              // nothing to do here, as the default encoder will be used in the program.
+            }
           }
         }
       }
