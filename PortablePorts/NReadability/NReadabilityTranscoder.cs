@@ -1656,7 +1656,9 @@ namespace ReadSharp.Ports.NReadability
 
           if (attributeValueTransformer != null)
           {
-            attributeTransformationResult = attributeValueTransformer.Invoke(new AttributeTransformationInput { AttributeValue = attributeValue, Element = element });
+            attributeTransformationResult = attributeValueTransformer.Invoke(
+              new AttributeTransformationInput { AttributeValue = attributeValue, Element = element, ArticleUrl = url }
+            );
           }
           else
           {

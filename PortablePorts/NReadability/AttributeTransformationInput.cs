@@ -6,6 +6,8 @@ namespace ReadSharp.Ports.NReadability
   {
     public string AttributeValue { get; set; }
 
+    public string ArticleUrl { get; set; }
+
     public XElement Element { get; set; }
   }
 }

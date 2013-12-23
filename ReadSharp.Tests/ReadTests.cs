@@ -76,6 +76,20 @@ namespace ReadSharp.Tests
 
 
     [Fact]
+    public async Task DoesUseDeepLinksWork()
+    {
+      Article result = await reader.Read(new Uri("https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering"), true, false, true);
+
+      Assert.Contains("<a href=\"#Browser_compatibility\">", result.Content);
+
+      result = await reader.Read(new Uri("https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering"), true, false, false);
+
+      Assert.DoesNotContain("<a href=\"#Browser_compatibility\">", result.Content);
+      Assert.Contains("<a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering#Browser_compatibility\">", result.Content);
+    }
+
+
+    [Fact]
     public async Task TestCzechCharsets()
     {
       string expectedTitle = "Kouzelné české Vánoce";

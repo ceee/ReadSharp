@@ -100,11 +100,16 @@ namespace ReadSharp
     /// <param name="uri">An URI to extract the content from.</param>
     /// <param name="bodyOnly">if set to <c>true</c> [only body is returned].</param>
     /// <param name="noHeadline">if set to <c>true</c> [no headline (h1) is included in generated HTML].</param>
+    /// <param name="useDeepLinks">if set to <c>true</c> [deep links with hashes are not transformed to absolute URIs].</param>
     /// <returns>
     /// An article with extracted content and meta information.
     /// </returns>
     /// <exception cref="Exception"></exception>
-    public async Task<Article> Read(Uri uri, bool bodyOnly = true, bool noHeadline = false)
+    public async Task<Article> Read(
+      Uri uri,
+      bool bodyOnly = true,
+      bool noHeadline = false,
+      bool useDeepLinks = false)
     {
       HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
       HttpResponseMessage respo = null;
@@ -124,6 +129,16 @@ namespace ReadSharp
 
       // get HTML string from URI
       Response response = await Request(uri);
+
+      // handle deep links
+      if (useDeepLinks)
+      {
+        _transcoder.AnchorHrefTranformer = ReverseDeepLinks;
+      }
+      else
+      {
+        _transcoder.AnchorHrefTranformer = null;
+      }
 
       // readability
       TranscodingResult transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline);
@@ -206,6 +221,39 @@ namespace ReadSharp
 
       // process/transcode HTML
       return _transcoder.Transcode(transcodingInput);
+    }
+
+
+
+    /// <summary>
+    /// Reverses the deep links.
+    /// </summary>
+    /// <param name="input">The input.</param>
+    /// <returns></returns>
+    private AttributeTransformationResult ReverseDeepLinks(AttributeTransformationInput input)
+    {
+      string articleUrl = input.ArticleUrl;
+      string link = input.AttributeValue;
+
+      // remove deep-link if in article URI
+      if (articleUrl.Contains("#"))
+      {
+        articleUrl = articleUrl.Split('#')[0];
+      }
+
+      // anchor is a deep-link
+      if (
+        input.AttributeValue.Contains(articleUrl) &&
+        input.AttributeValue.Contains("#") &&
+        input.AttributeValue.Split('#')[1].Length > 0)
+      {
+        link = "#" + input.AttributeValue.Split('#')[1];
+      }
+
+      return new AttributeTransformationResult()
+      {
+        TransformedValue = link
+      };
     }
 
 
