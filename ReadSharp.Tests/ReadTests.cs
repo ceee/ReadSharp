@@ -33,7 +33,7 @@ namespace ReadSharp.Tests
       Article result = await reader.Read(new Uri("http://frontendplay.com/story/4/http-caching-demystified-part-2-implementation"), new ReadOptions()
       {
         HasNoHeadline = true,
-        HasOnlyBody = false
+        HasHeaderTags = true
       });
 
       Assert.Contains("<!DOCTYPE html>", result.Content);

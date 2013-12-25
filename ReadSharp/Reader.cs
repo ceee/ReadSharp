@@ -214,7 +214,7 @@ namespace ReadSharp
         Url = uri.ToString(),
         DomSerializationParams = new DomSerializationParams()
         {
-          BodyOnly = options.HasOnlyBody,
+          BodyOnly = !options.HasHeaderTags,
           NoHeadline = options.HasNoHeadline,
           PrettyPrint = true,
           DontIncludeContentTypeMetaElement = true,

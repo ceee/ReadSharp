@@ -4,12 +4,12 @@ namespace ReadSharp
   public class ReadOptions
   {
     /// <summary>
-    /// Is only the body is returned
+    /// Are header tags and Doctype returned
     /// </summary>
     /// <value>
     ///   <c>true</c> if [has only body]; otherwise, <c>false</c>.
     /// </value>
-    public bool HasOnlyBody { get; set; }
+    public bool HasHeaderTags { get; set; }
 
     /// <summary>
     /// Is no headline (h1) is included in generated HTML
@@ -35,7 +35,7 @@ namespace ReadSharp
     {
       return new ReadOptions()
       {
-        HasOnlyBody = true,
+        HasHeaderTags = false,
         HasNoHeadline = false,
         UseDeepLinks = false
       };
