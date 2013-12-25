@@ -177,7 +177,8 @@ namespace ReadSharp
         FrontImage = transcodingResult.ExtractedImage,
         Images = images,
         Favicon = transcodingResult.ExtractedFavicon,
-        NextPage = transcodingResult.NextPageUrl != null ? new Uri(transcodingResult.NextPageUrl, UriKind.Absolute) : null
+        NextPage = transcodingResult.NextPageUrl != null ? new Uri(transcodingResult.NextPageUrl, UriKind.Absolute) : null,
+        Encoding = _encoder.GetEncodingFromString(response.Charset) ?? encoding ?? null
       };
     }
 

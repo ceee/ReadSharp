@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace ReadSharp
 {
@@ -63,5 +64,13 @@ namespace ReadSharp
     /// The next page URL.
     /// </value>
     public Uri NextPage { get; set; }
+
+    /// <summary>
+    /// Gets or sets the encoding of the article.
+    /// </summary>
+    /// <value>
+    /// The encoding.
+    /// </value>
+    public Encoding Encoding { get; set; }
   }
 }
