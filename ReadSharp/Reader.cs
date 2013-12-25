@@ -111,24 +111,20 @@ namespace ReadSharp
       bool noHeadline = false,
       bool useDeepLinks = false)
     {
-      HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-      HttpResponseMessage respo = null;
+      Response response;
+      TranscodingResult transcodingResult;
+      Encoding encoding;
 
       // make async request
       try
       {
-        respo = await _httpClient.SendAsync(request);
+        // get HTML string from URI
+        response = await Request(uri);
       }
       catch (HttpRequestException exc)
       {
-        throw new Exception(exc.Message, exc);
+        throw new ReadException(exc.Message);
       }
-
-      // read response
-      string resp = await respo.Content.ReadAsStringAsync();
-
-      // get HTML string from URI
-      Response response = await Request(uri);
 
       // handle deep links
       if (useDeepLinks)
@@ -141,20 +137,29 @@ namespace ReadSharp
       }
 
       // readability
-      TranscodingResult transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline);
-
-      Encoding encoding = _encoder.GetEncodingFromString(transcodingResult.Charset);
-
-      // extract again if encoding didn't match or failed to retrieve
-      if (encoding != null && (
-        String.IsNullOrEmpty(response.Charset)
-        ||
-        !String.Equals(response.Charset, transcodingResult.Charset, StringComparison.OrdinalIgnoreCase)))
+      try
       {
-        transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline, encoding);
+        transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline);
+
+        encoding = _encoder.GetEncodingFromString(transcodingResult.Charset);
+
+        // extract again if encoding didn't match or failed to retrieve
+        if (encoding != null && (
+          String.IsNullOrEmpty(response.Charset)
+          ||
+          !String.Equals(response.Charset, transcodingResult.Charset, StringComparison.OrdinalIgnoreCase)))
+        {
+          transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline, encoding);
+        }
+      }
+      catch (Exception exc)
+      {
+        throw new ReadException(exc.Message);
       }
 
       // get images from article
+      int id = 1;
+
       List<ArticleImage> images = transcodingResult.Images.Select<XElement, ArticleImage>(image =>
       {
         Uri imageUri;
@@ -162,6 +167,7 @@ namespace ReadSharp
 
         return new ArticleImage()
         {
+          ID = (id++).ToString(),
           Uri = imageUri,
           Title = image.GetAttributeValue("title", null),
           AlternativeText = image.GetAttributeValue("alt", null)
@@ -276,7 +282,7 @@ namespace ReadSharp
       }
       catch (HttpRequestException exc)
       {
-        throw new Exception(exc.Message, exc);
+        throw new ReadException(exc.Message, exc);
       }
 
       // validate HTTP response
@@ -284,7 +290,7 @@ namespace ReadSharp
       {
         string exceptionString = String.Format("Request error: {0} ({1})", response.ReasonPhrase, (int)response.StatusCode);
 
-        throw new Exception(exceptionString);
+        throw new ReadException(exceptionString);
       }
 
       // read response

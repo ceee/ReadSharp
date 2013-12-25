@@ -59,7 +59,7 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task ReadArticleWithInvalidUriTest()
     {
-      await ThrowsAsync<Exception>(async () =>
+      await ThrowsAsync<ReadException>(async () =>
       {
         await reader.Read(new Uri("http://frontendplayyyyy.com"));
       });

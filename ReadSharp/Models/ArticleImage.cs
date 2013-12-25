@@ -8,6 +8,14 @@ namespace ReadSharp
   public class ArticleImage
   {
     /// <summary>
+    /// Gets or sets the identifier.
+    /// </summary>
+    /// <value>
+    /// The identifier.
+    /// </value>
+    public string ID { get; set; }
+
+    /// <summary>
     /// Gets or sets the URI.
     /// </summary>
     /// <value>
