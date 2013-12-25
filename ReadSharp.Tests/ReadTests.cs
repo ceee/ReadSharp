@@ -30,7 +30,11 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task ReadArticleWithContainerNoHeadlineTest()
     {
-      Article result = await reader.Read(new Uri("http://frontendplay.com/story/4/http-caching-demystified-part-2-implementation"), false, true);
+      Article result = await reader.Read(new Uri("http://frontendplay.com/story/4/http-caching-demystified-part-2-implementation"), new ReadOptions()
+      {
+        HasNoHeadline = true,
+        HasOnlyBody = false
+      });
 
       Assert.Contains("<!DOCTYPE html>", result.Content);
       Assert.DoesNotContain("<h1>", result.Content);
@@ -78,11 +82,17 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task DoesUseDeepLinksWork()
     {
-      Article result = await reader.Read(new Uri("https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering"), true, false, true);
+      Article result = await reader.Read(new Uri("https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering"), new ReadOptions()
+      {
+        UseDeepLinks = true
+      });
 
       Assert.Contains("<a href=\"#Browser_compatibility\">", result.Content);
 
-      result = await reader.Read(new Uri("https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering"), true, false, false);
+      result = await reader.Read(new Uri("https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering"), new ReadOptions()
+      {
+        UseDeepLinks = false
+      });
 
       Assert.DoesNotContain("<a href=\"#Browser_compatibility\">", result.Content);
       Assert.Contains("<a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering#Browser_compatibility\">", result.Content);

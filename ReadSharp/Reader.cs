@@ -98,22 +98,21 @@ namespace ReadSharp
     /// Reads article content from the given URI.
     /// </summary>
     /// <param name="uri">An URI to extract the content from.</param>
-    /// <param name="bodyOnly">if set to <c>true</c> [only body is returned].</param>
-    /// <param name="noHeadline">if set to <c>true</c> [no headline (h1) is included in generated HTML].</param>
-    /// <param name="useDeepLinks">if set to <c>true</c> [deep links with hashes are not transformed to absolute URIs].</param>
+    /// <param name="options">The transform options.</param>
     /// <returns>
     /// An article with extracted content and meta information.
     /// </returns>
-    /// <exception cref="Exception"></exception>
-    public async Task<Article> Read(
-      Uri uri,
-      bool bodyOnly = true,
-      bool noHeadline = false,
-      bool useDeepLinks = false)
+    /// <exception cref="ReadException"></exception>
+    public async Task<Article> Read(Uri uri, ReadOptions options = null)
     {
       Response response;
       TranscodingResult transcodingResult;
       Encoding encoding;
+
+      if (options == null)
+      {
+        options = ReadOptions.CreateDefault();
+      }
 
       // make async request
       try
@@ -127,7 +126,7 @@ namespace ReadSharp
       }
 
       // handle deep links
-      if (useDeepLinks)
+      if (options.UseDeepLinks)
       {
         _transcoder.AnchorHrefTranformer = ReverseDeepLinks;
       }
@@ -139,7 +138,7 @@ namespace ReadSharp
       // readability
       try
       {
-        transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline);
+        transcodingResult = ExtractReadableInformation(uri, response.Stream, options);
 
         encoding = _encoder.GetEncodingFromString(transcodingResult.Charset);
 
@@ -149,7 +148,7 @@ namespace ReadSharp
           ||
           !String.Equals(response.Charset, transcodingResult.Charset, StringComparison.OrdinalIgnoreCase)))
         {
-          transcodingResult = ExtractReadableInformation(uri, response.Stream, bodyOnly, noHeadline, encoding);
+          transcodingResult = ExtractReadableInformation(uri, response.Stream, options, encoding);
         }
       }
       catch (Exception exc)
@@ -195,14 +194,13 @@ namespace ReadSharp
     /// </summary>
     /// <param name="uri">The URI.</param>
     /// <param name="textStream">The text stream.</param>
-    /// <param name="bodyOnly">if set to <c>true</c> [body only].</param>
-    /// <param name="noHeadline">if set to <c>true</c> [no headline].</param>
+    /// <param name="options">The options.</param>
+    /// <param name="encoding">The encoding.</param>
     /// <returns></returns>
     protected TranscodingResult ExtractReadableInformation(
       Uri uri,
       Stream textStream,
-      bool bodyOnly = true,
-      bool noHeadline = false,
+      ReadOptions options,
       Encoding encoding = null)
     {
       // response stream to text
@@ -216,8 +214,8 @@ namespace ReadSharp
         Url = uri.ToString(),
         DomSerializationParams = new DomSerializationParams()
         {
-          BodyOnly = bodyOnly,
-          NoHeadline = noHeadline,
+          BodyOnly = options.HasOnlyBody,
+          NoHeadline = options.HasNoHeadline,
           PrettyPrint = true,
           DontIncludeContentTypeMetaElement = true,
           DontIncludeMobileSpecificMetaElements = true,
@@ -282,7 +280,7 @@ namespace ReadSharp
       }
       catch (HttpRequestException exc)
       {
-        throw new ReadException(exc.Message, exc);
+        throw new ReadException(exc.Message);
       }
 
       // validate HTTP response

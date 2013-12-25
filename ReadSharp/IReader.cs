@@ -9,18 +9,11 @@ namespace ReadSharp
     /// Reads article content from the given URI.
     /// </summary>
     /// <param name="uri">An URI to extract the content from.</param>
-    /// <param name="bodyOnly">if set to <c>true</c> [only body is returned].</param>
-    /// <param name="noHeadline">if set to <c>true</c> [no headline (h1) is included in generated HTML].</param>
-    /// <param name="useDeepLinks">if set to <c>true</c> [deep links with hashes are not transformed to absolute URIs].</param>
+    /// <param name="options">The transform options.</param>
     /// <returns>
     /// An article with extracted content and meta information.
     /// </returns>
-    /// <exception cref="Exception"></exception>
-    Task<Article> Read(
-      Uri uri,
-      bool bodyOnly = true,
-      bool noHeadline = false,
-      bool useDeepLinks = false
-    );
+    /// <exception cref="ReadException"></exception>
+    Task<Article> Read(Uri uri, ReadOptions options = null);
   }
 }
