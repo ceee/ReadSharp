@@ -123,11 +123,14 @@ namespace ReadSharp.Ports.NReadability
           { "http-equiv|Content-Type", "content" }
         });
 
-        int charsetStart = result.IndexOf("charset=");
-        if (charsetStart > 0)
+        if (!String.IsNullOrEmpty(result))
         {
-          charsetStart += 8;
-          result = result.Substring(charsetStart, result.Length - charsetStart);
+          int charsetStart = result.IndexOf("charset=");
+          if (charsetStart > 0)
+          {
+            charsetStart += 8;
+            result = result.Substring(charsetStart, result.Length - charsetStart);
+          }
         }
       }
 

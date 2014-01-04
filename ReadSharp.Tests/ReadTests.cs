@@ -119,5 +119,15 @@ namespace ReadSharp.Tests
       Article result = await reader.Read(new Uri("http://www.uelike.com"));
       Assert.Equal(result.Title, expectedTitle);
     }
+
+    [Fact]
+    public async Task TestCriticalURIs()
+    {
+      Article result = await reader.Read(new Uri("http://www.jetbrains.com/resharper/whatsnew/index.html"));
+      Assert.NotEmpty(result.Content);
+
+      result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
+      Assert.NotEmpty(result.Content);
+    }
   }
 }
