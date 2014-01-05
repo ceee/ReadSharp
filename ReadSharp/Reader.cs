@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -99,11 +100,14 @@ namespace ReadSharp
     /// </summary>
     /// <param name="uri">An URI to extract the content from.</param>
     /// <param name="options">The transform options.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
     /// An article with extracted content and meta information.
     /// </returns>
     /// <exception cref="ReadException"></exception>
-    public async Task<Article> Read(Uri uri, ReadOptions options = null)
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="OperationCanceledException"></exception>
+    public async Task<Article> Read(Uri uri, ReadOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
     {
       Response response;
       TranscodingResult transcodingResult;
@@ -118,7 +122,7 @@ namespace ReadSharp
       try
       {
         // get HTML string from URI
-        response = await Request(uri);
+        response = await Request(uri, cancellationToken);
       }
       catch (HttpRequestException exc)
       {
@@ -267,8 +271,11 @@ namespace ReadSharp
     /// Fetches a resource
     /// </summary>
     /// <param name="uri">The URI.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
-    private async Task<Response> Request(Uri uri)
+    /// <exception cref="ReadException">
+    /// </exception>
+    private async Task<Response> Request(Uri uri, CancellationToken cancellationToken)
     {
       HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
       HttpResponseMessage response = null;
@@ -276,7 +283,7 @@ namespace ReadSharp
       // make async request
       try
       {
-        response = await _httpClient.SendAsync(request);
+        response = await _httpClient.SendAsync(request, cancellationToken);
       }
       catch (HttpRequestException exc)
       {
