@@ -86,8 +86,6 @@ namespace ReadSharp
       // add accepted encodings
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip,deflate");
 
-      //_httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "UTF-8");
-
       // add user agent
       string version = Assembly.GetExecutingAssembly().FullName.Split(',')[1].Split('=')[1];
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", String.Format(_userAgent, "; ReadSharp/" + version));
@@ -142,8 +140,13 @@ namespace ReadSharp
       // readability
       try
       {
-        transcodingResult = ExtractReadableInformation(uri, response.Stream, options);
+        // charset found in HTTP headers
+        encoding = _encoder.GetEncodingFromString(response.Charset);
 
+        // transcode content
+        transcodingResult = ExtractReadableInformation(uri, response.Stream, options, encoding);
+
+        // get encoding found in HTML
         encoding = _encoder.GetEncodingFromString(transcodingResult.Charset);
 
         // extract again if encoding didn't match or failed to retrieve

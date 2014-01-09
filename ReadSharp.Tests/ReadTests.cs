@@ -109,6 +109,10 @@ namespace ReadSharp.Tests
       expectedTitle = "Kolik se dá vydělat na volné noze?";
       result = await reader.Read(new Uri("http://navolnenoze.cz/blog/vydelky/"));
       Assert.Equal(result.Title, expectedTitle);
+
+      expectedTitle = "Zkázoděl | dialog.ihned.cz - Komentáře";
+      result = await reader.Read(new Uri("http://dialog.ihned.cz/komentare/c1-61530110-zkazodel"));
+      Assert.Equal(result.Title, expectedTitle);
     }
 
 
@@ -120,14 +124,17 @@ namespace ReadSharp.Tests
       Assert.Equal(result.Title, expectedTitle);
     }
 
-    [Fact]
-    public async Task TestCriticalURIs()
-    {
-      Article result = await reader.Read(new Uri("http://www.jetbrains.com/resharper/whatsnew/index.html"));
-      Assert.NotEmpty(result.Content);
+    //[Fact]
+    //public async Task TestCriticalURIs()
+    //{
+    //  //Article result = await reader.Read(new Uri("http://www.jetbrains.com/resharper/whatsnew/index.html"));
+    //  //Assert.NotEmpty(result.Content);
 
-      result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
-      Assert.NotEmpty(result.Content);
-    }
+    //  //result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
+    //  //Assert.NotEmpty(result.Content);
+
+    //  //Article result = await reader.Read(new Uri("http://bit.ly/KAh7FJ"));
+    //  //Assert.NotEmpty(result.Content);
+    //}
   }
 }
