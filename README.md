@@ -37,7 +37,7 @@ try
 {
   article = await reader.Read(new Uri("http://frontendplay.com/story/4/http-caching-demystified-part-2-implementation"));
 }
-catch (Exception exc)
+catch (ReadException exc)
 {
   // handle exception
 }

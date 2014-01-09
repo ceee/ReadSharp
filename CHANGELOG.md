@@ -1,3 +1,7 @@
+### 4.2.2
+
+- use encoding found in HTTP headers in first iteration (fixes [issue #6](https://github.com/ceee/ReadSharp/issues/6))
+
 ### 4.2.1
 
 - fixes [issue #3](https://github.com/ceee/ReadSharp/issues/3)
