@@ -124,17 +124,17 @@ namespace ReadSharp.Tests
       Assert.Equal(result.Title, expectedTitle);
     }
 
-    //[Fact]
-    //public async Task TestCriticalURIs()
-    //{
-    //  //Article result = await reader.Read(new Uri("http://www.jetbrains.com/resharper/whatsnew/index.html"));
-    //  //Assert.NotEmpty(result.Content);
+    [Fact]
+    public async Task TestCriticalURIs()
+    {
+      Article result = await reader.Read(new Uri("http://wpcentral.com.feedsportal.com/c/33999/f/616880/s/35a02b5e/sc/15/l/0L0Swpcentral0N0Cgameloft0Ediscusses0Etheir0Enew0Egame0Ebrothers0Earms0E30Esons0Ewar0Eceslive/story01.htm"));
+      Assert.NotEmpty(result.Content);
 
-    //  //result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
-    //  //Assert.NotEmpty(result.Content);
+      //result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
+      //Assert.NotEmpty(result.Content);
 
-    //  //Article result = await reader.Read(new Uri("http://bit.ly/KAh7FJ"));
-    //  //Assert.NotEmpty(result.Content);
-    //}
+      //Article result = await reader.Read(new Uri("http://bit.ly/KAh7FJ"));
+      //Assert.NotEmpty(result.Content);
+    }
   }
 }

@@ -111,7 +111,7 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Regex _BreakBeforeParagraphRegex = new Regex("<br[^>]*>\\s*<p");
     private static readonly Regex _NormalizeSpacesRegex = new Regex("\\s{2,}");
     private static readonly Regex _KillBreaksRegex = new Regex("(<br\\s*\\/?>(\\s|&nbsp;?)*){1,}");
-    private static readonly Regex _VideoRegex = new Regex("http:\\/\\/(www\\.)?(youtube|vimeo)\\.com", RegexOptions.IgnoreCase);
+    private static readonly Regex _VideoRegex = new Regex("\\/\\/(www\\.)?(youtube|vimeo)\\.com", RegexOptions.IgnoreCase);
     private static readonly Regex _ReplaceDoubleBrsRegex = new Regex("(<br[^>]*>[ \\n\\r\\t]*){2,}", RegexOptions.IgnoreCase);
     private static readonly Regex _ReplaceFontsRegex = new Regex("<(\\/?)font[^>]*>", RegexOptions.IgnoreCase);
     private static readonly Regex _ArticleTitleDashRegex1 = new Regex(" [\\|\\-] ");
@@ -1434,6 +1434,8 @@ namespace ReadSharp.Ports.NReadability
                   || "embed".Equals(elementName, StringComparison.OrdinalIgnoreCase);
 
       var elementsToRemove = new List<XElement>();
+
+      // TODO: proof iframe videos
 
       foreach (XElement element in elements)
       {
