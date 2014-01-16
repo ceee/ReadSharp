@@ -1,3 +1,7 @@
+### 4.2.3
+
+- add PrettyPrint option
+
 ### 4.2.2
 
 - use encoding found in HTTP headers in first iteration (fixes [issue #6](https://github.com/ceee/ReadSharp/issues/6))

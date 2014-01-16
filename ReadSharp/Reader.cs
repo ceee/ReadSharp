@@ -223,7 +223,7 @@ namespace ReadSharp
         {
           BodyOnly = !options.HasHeaderTags,
           NoHeadline = options.HasNoHeadline,
-          PrettyPrint = true,
+          PrettyPrint = options.PrettyPrint,
           DontIncludeContentTypeMetaElement = true,
           DontIncludeMobileSpecificMetaElements = true,
           DontIncludeDocTypeMetaElement = false,

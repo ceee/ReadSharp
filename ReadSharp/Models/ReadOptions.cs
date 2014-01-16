@@ -28,6 +28,14 @@ namespace ReadSharp
     public bool UseDeepLinks { get; set; }
 
     /// <summary>
+    /// Determines whether the output will be formatted.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [pretty print]; otherwise, <c>false</c>.
+    /// </value>
+    public bool PrettyPrint { get; set; }
+
+    /// <summary>
     /// Creates the default options.
     /// </summary>
     /// <returns></returns>
@@ -37,7 +45,8 @@ namespace ReadSharp
       {
         HasHeaderTags = false,
         HasNoHeadline = false,
-        UseDeepLinks = false
+        UseDeepLinks = false,
+        PrettyPrint = false
       };
     }
   }
