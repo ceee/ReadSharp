@@ -38,5 +38,16 @@ namespace ReadSharp
     /// The alternative text.
     /// </value>
     public string AlternativeText { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating whether [is valid URI].
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [is valid URI]; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsValidUri
+    {
+      get { return Uri != null && Uri.IsWellFormedUriString(Uri.ToString(), UriKind.Absolute); }
+    }
   }
 }
