@@ -282,6 +282,27 @@ namespace ReadSharp.Ports.NReadability
         .Where(e => tagName.Equals(e.Name.LocalName, StringComparison.OrdinalIgnoreCase));
     }
 
+    public static IEnumerable<XElement> GetElementsByClass(this XContainer container, string className)
+    {
+      if (container == null)
+      {
+        throw new ArgumentNullException("container");
+      }
+
+      if (string.IsNullOrEmpty(className))
+      {
+        throw new ArgumentNullException("className");
+      }
+
+      if (className.StartsWith("."))
+      {
+        className = className.Remove(0, 1);
+      }
+
+      return container.Descendants()
+        .Where(e => e != null && e.GetAttributeValue("class", "").Contains(className)); //tagName.Equals(e.Name.LocalName, StringComparison.OrdinalIgnoreCase));
+    }
+
     public static IEnumerable<XElement> GetChildrenByTagName(this XContainer container, string tagName)
     {
       if (container == null)

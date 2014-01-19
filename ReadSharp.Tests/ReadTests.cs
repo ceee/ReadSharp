@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -135,6 +136,15 @@ namespace ReadSharp.Tests
 
       //Article result = await reader.Read(new Uri("http://bit.ly/KAh7FJ"));
       //Assert.NotEmpty(result.Content);
+    }
+
+    [Fact]
+    public async Task TestVergeReturnsFullArticle()
+    {
+      Article result = await reader.Read(new Uri("http://www.theverge.com/2013/11/18/5116360/nokia-lumia-1520-review"));
+      Debug.WriteLine(result.Content.Length);
+      Assert.Contains("Three years ago, Nokia shipped over 110 million smartphones worldwide. ", result.Content);
+      Assert.True(result.Content.Length > 6000);
     }
   }
 }

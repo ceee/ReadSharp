@@ -20,11 +20,6 @@ namespace ReadSharp
   public class Reader : IReader
   {
     /// <summary>
-    /// Used UserAgent for HTTP request
-    /// </summary>
-    protected string _userAgent = "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0; ARM; Mobile; Touch{0}) like Gecko";
-
-    /// <summary>
     /// REST client used for HTML retrieval
     /// </summary>
     protected readonly HttpClient _httpClient;
@@ -44,10 +39,8 @@ namespace ReadSharp
     /// <summary>
     /// Initializes a new instance of the <see cref="Reader" /> class.
     /// </summary>
-    /// <param name="userAgent">Custom UserAgent string.</param>
-    /// <param name="handler">The HttpMessage handler.</param>
-    /// <param name="timeout">Request timeout (in seconds).</param>
-    public Reader(string userAgent = null, HttpMessageHandler handler = null, int? timeout = null)
+    /// <param name="options">The HTTP options.</param>
+    public Reader(HttpOptions options = null)
     {
       // initialize transcoder
       _transcoder = new NReadabilityTranscoder(
@@ -59,25 +52,25 @@ namespace ReadSharp
         readingSize: ReadingSize.Medium
       );
 
+      // get default HTTP options if none available
+      if (options == null)
+      {
+        options = HttpOptions.CreateDefault();
+      }
+
       // initialize custom encoder
       _encoder = new Encodings.Encoder(true);
 
-      // override user agent
-      if (!string.IsNullOrEmpty(userAgent))
-      {
-        _userAgent = userAgent;
-      }
-
       // initialize HTTP client
-      _httpClient = new HttpClient(handler ?? new HttpClientHandler()
+      _httpClient = new HttpClient(options.CustomHttpHandler ?? new HttpClientHandler()
       {
         AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
         AllowAutoRedirect = true
       });
 
-      if (timeout.HasValue)
+      if (options.RequestTimeout.HasValue)
       {
-        _httpClient.Timeout = TimeSpan.FromSeconds(timeout.Value);
+        _httpClient.Timeout = TimeSpan.FromSeconds(options.RequestTimeout.Value);
       }
 
       // add accept types
@@ -87,8 +80,11 @@ namespace ReadSharp
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip,deflate");
 
       // add user agent
+      string userAgent = options.UseMobileUserAgent ? options.UserAgentMobile : options.UserAgent;
+
       string version = Assembly.GetExecutingAssembly().FullName.Split(',')[1].Split('=')[1];
-      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", String.Format(_userAgent, "; ReadSharp/" + version));
+
+      _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", String.Format(userAgent, "; ReadSharp/" + version));
     }
 
 

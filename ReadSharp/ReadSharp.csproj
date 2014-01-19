@@ -63,6 +63,7 @@
     <Compile Include="IReader.cs" />
     <Compile Include="Models\Article.cs" />
     <Compile Include="Models\ArticleImage.cs" />
+    <Compile Include="Models\HttpOptions.cs" />
     <Compile Include="Models\ReadOptions.cs" />
     <Compile Include="Reader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

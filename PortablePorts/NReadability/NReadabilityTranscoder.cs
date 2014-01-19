@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -102,7 +103,7 @@ namespace ReadSharp.Ports.NReadability
 
     private static readonly Regex _UnlikelyCandidatesRegex = new Regex("combx|comment|community|disqus|extra|foot|header|menu|remark|rss|shoutbox|sidebar|side|sponsor|ad-break|agegate|pagination|pager|popup|tweet|twitter", RegexOptions.IgnoreCase);
     private static readonly Regex _OkMaybeItsACandidateRegex = new Regex("and|article|body|column|main|shadow", RegexOptions.IgnoreCase);
-    private static readonly Regex _PositiveWeightRegex = new Regex("article|body|content|entry|hentry|main|page|pagination|post|text|blog|story", RegexOptions.IgnoreCase);
+    private static readonly Regex _PositiveWeightRegex = new Regex("article|body|content|entry|hentry|main|page|pagination|post|text|blog|story|paragraph|instapaper_body|entry-content|article-body|entry-body", RegexOptions.IgnoreCase);
     private static readonly Regex _NegativeWeightRegex = new Regex("combx|comment|com-|contact|foot|footer|footnote|masthead|media|meta|outbrain|promo|related|scroll|shoutbox|sidebar|side|sponsor|shopping|tags|tool|widget", RegexOptions.IgnoreCase);
     private static readonly Regex _NegativeLinkParentRegex = new Regex("(stories|articles|news|documents|posts|notes|series|historie|artykuly|artykuły|wpisy|dokumenty|serie|geschichten|erzählungen|erzahlungen)", RegexOptions.IgnoreCase);
     private static readonly Regex _Extraneous = new Regex("print|archive|comment|discuss|e[-]?mail|share|reply|all|login|sign|single|also", RegexOptions.IgnoreCase);
@@ -123,7 +124,7 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Regex _NextStoryLink = new Regex("(story|article|news|document|post|note|series|historia|artykul|artykuł|wpis|dokument|seria|geschichte|erzählung|erzahlung|artikel|serie)", RegexOptions.IgnoreCase);
     private static readonly Regex _PrevLink = new Regex("(prev|earl|[^b]old|new|wstecz|poprzednia|<|�)", RegexOptions.IgnoreCase);
     private static readonly Regex _PageRegex = new Regex("pag(e|ing|inat)|([^a-z]|^)pag([^a-z]|$)", RegexOptions.IgnoreCase);
-    private static readonly Regex _LikelyParagraphDivRegex = new Regex("text|para|parbase", RegexOptions.IgnoreCase);
+    private static readonly Regex _LikelyParagraphDivRegex = new Regex("text|para|parbase|paragraph", RegexOptions.IgnoreCase);
 
     #endregion
 
@@ -135,7 +136,7 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Dictionary<Regex, string> _articleContentElementHints =
       new Dictionary<Regex, string>
         {
-          { new Regex("^https?://(www|mobile)\\.theverge.com", RegexOptions.IgnoreCase), "article" },
+          { new Regex("^https?://(www|mobile)\\.theverge.com", RegexOptions.IgnoreCase), ".entry-body" },
         };
 
     #endregion
@@ -1141,6 +1142,8 @@ namespace ReadSharp.Ports.NReadability
         topCandidateElement.Add(documentBody.Nodes());
       }
 
+      Debug.WriteLine(topCandidateElement);
+
       return topCandidateElement;
     }
 
@@ -1791,9 +1794,18 @@ namespace ReadSharp.Ports.NReadability
         throw new ArgumentException("Argument can't be null nor empty.", "articleContentElementHint");
       }
 
-      return document
-        .GetElementsByTagName(articleContentElementHint)
-        .FirstOrDefault();
+      if (articleContentElementHint.StartsWith("."))
+      {
+        return document
+         .GetElementsByClass(articleContentElementHint)
+         .FirstOrDefault();
+      }
+      else
+      {
+        return document
+          .GetElementsByTagName(articleContentElementHint)
+          .FirstOrDefault();
+      }
     }
 
     private static string GetArticleContentElementHint(string url)
