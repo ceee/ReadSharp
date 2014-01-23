@@ -45,12 +45,23 @@ catch (ReadException exc)
 
 ## Options
 
+### HttpOptions
+
 You can pass `HttpOptions` to the `Reader` constructor, which count for all requests:
 
 - `HttpMessageHandler` **CustomHttpHandler**<br>Use your own HTTP handler
 - `int?` **RequestTimeout**<br>Define a custom timeout _in seconds_, after which requests should cancel
 - `string` **UserAgent**<br>Override the user agent, which is passed to the destination server
 - `bool` **UseMobileUserAgent**<br>There are desktop and mobile default user agents. By enabling this property, the mobile user agent is used. _If you pass a custom user agent, this property is ignored!_
+
+### ReadOptions
+
+There are also `ReadOptions` available, which are passed on every request:
+
+- `bool` **HasHeaderTags**<br>Return complete HTML document or just the body part
+- `bool` **HasNoHeadline**<br>Removes `<h1>` title from the article
+- `bool` **UseDeepLinks**<br>If you check this option, deep-links (containing hashes, e.g. `href="#article"`) are not transformed into absolute URIs
+- `bool` **PrettyPrint**<br>Determines whether the HTML output will be formatted
 
 ## Article Model
 
