@@ -183,7 +183,7 @@ namespace ReadSharp
       try
       {
         plainContent = HtmlUtilities.ConvertToPlainText(transcodingResult.ExtractedContent);
-        wordCount = !String.IsNullOrEmpty(plainContent) ? plainContent.Split(' ', '\n').Length : 0;
+        wordCount = HtmlUtilities.CountWords(plainContent);
       }
       catch
       {

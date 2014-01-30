@@ -4,8 +4,13 @@ using System.IO;
 
 namespace ReadSharp
 {
-  internal class HtmlUtilities
+  public class HtmlUtilities
   {
+    /// <summary>
+    /// Converts HTML to plain text / strips tags.
+    /// </summary>
+    /// <param name="html">The HTML.</param>
+    /// <returns></returns>
     public static string ConvertToPlainText(string html)
     {
       HtmlDocument doc = new HtmlDocument();
@@ -15,6 +20,18 @@ namespace ReadSharp
       ConvertTo(doc.DocumentNode, sw);
       sw.Flush();
       return sw.ToString();
+    }
+
+
+    /// <summary>
+    /// Count the words.
+    /// The content has to be converted to plain text before (using ConvertToPlainText).
+    /// </summary>
+    /// <param name="plainText">The plain text.</param>
+    /// <returns></returns>
+    public static int CountWords(string plainText)
+    {
+      return !String.IsNullOrEmpty(plainText) ? plainText.Split(' ', '\n').Length : 0;
     }
 
 
