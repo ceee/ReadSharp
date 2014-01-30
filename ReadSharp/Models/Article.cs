@@ -34,6 +34,30 @@ namespace ReadSharp
     public string Content { get; set; }
 
     /// <summary>
+    /// Could the parser extract any contents?
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [content extracted]; otherwise, <c>false</c>.
+    /// </value>
+    public bool ContentExtracted { get; set; }
+
+    /// <summary>
+    /// Plain content without HTML tags.
+    /// </summary>
+    /// <value>
+    ///   The plain content.
+    /// </value>
+    public string PlainContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the word count (based on the PlainContent).
+    /// </summary>
+    /// <value>
+    /// The word count.
+    /// </value>
+    public int WordCount { get; set; }
+
+    /// <summary>
     /// Gets or sets the front image.
     /// </summary>
     /// <value>

@@ -176,12 +176,29 @@ namespace ReadSharp
         };
       }).ToList();
 
+      // get word count and plain text
+      string plainContent;
+      int wordCount = 0;
+
+      try
+      {
+        plainContent = HtmlUtilities.ConvertToPlainText(transcodingResult.ExtractedContent);
+        wordCount = !String.IsNullOrEmpty(plainContent) ? plainContent.Split(' ', '\n').Length : 0;
+      }
+      catch
+      {
+        plainContent = null;
+      }
+
       // create article
       return new Article()
       {
         Title = transcodingResult.ExtractedTitle,
         Description = transcodingResult.ExtractedDescription,
         Content = transcodingResult.ExtractedContent,
+        ContentExtracted = transcodingResult.ContentExtracted ? wordCount > 0 : false,
+        PlainContent = plainContent,
+        WordCount = wordCount,
         FrontImage = transcodingResult.ExtractedImage,
         Images = images,
         Favicon = transcodingResult.ExtractedFavicon,

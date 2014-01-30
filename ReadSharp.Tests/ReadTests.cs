@@ -100,6 +100,16 @@ namespace ReadSharp.Tests
 
 
     [Fact]
+    public async Task ArePropertiesCorrectlyAssignedWithEmptyArticle()
+    {
+      Article result = await reader.Read(new Uri("https://docs.google.com/presentation/d/1n4NyG4uPRjAA8zn_pSQ_Ket0RhcWC6QlZ6LMjKeECo0/preview?sle=true#slide=id.g178014302_016"));
+      Assert.False(result.ContentExtracted);
+      Assert.True(result.WordCount == 7);
+      Assert.Equal(result.Title, result.PlainContent);
+    }
+
+
+    [Fact]
     public async Task TestCzechCharsets()
     {
       string expectedTitle = "Kouzelné české Vánoce";
