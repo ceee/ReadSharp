@@ -124,7 +124,8 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Regex _NextStoryLink = new Regex("(story|article|news|document|post|note|series|historia|artykul|artykuł|wpis|dokument|seria|geschichte|erzählung|erzahlung|artikel|serie)", RegexOptions.IgnoreCase);
     private static readonly Regex _PrevLink = new Regex("(prev|earl|[^b]old|new|wstecz|poprzednia|<|�)", RegexOptions.IgnoreCase);
     private static readonly Regex _PageRegex = new Regex("pag(e|ing|inat)|([^a-z]|^)pag([^a-z]|$)", RegexOptions.IgnoreCase);
-    private static readonly Regex _LikelyParagraphDivRegex = new Regex("text|para|parbase|paragraph", RegexOptions.IgnoreCase);
+    private static readonly Regex _LikelyParagraphDivRegex = new Regex("text|para|parbase|paragraph|figure", RegexOptions.IgnoreCase);
+    private static readonly Regex _LikelyImageContainerRegex = new Regex("image|figure|photo|media", RegexOptions.IgnoreCase);
 
     #endregion
 
@@ -751,14 +752,9 @@ namespace ReadSharp.Ports.NReadability
 
       rootElement.GetElementsByTagName("script")
         .ForEach(scriptElement =>
-                   {
-                     string scriptSrc = scriptElement.GetAttributeValue("src", null);
-
-                     if (string.IsNullOrEmpty(scriptSrc) || scriptSrc.LastIndexOf("readability") == -1)
-                     {
-                       elementsToRemove.Add(scriptElement);
-                     }
-                   });
+        {
+          elementsToRemove.Add(scriptElement);
+        });
 
       RemoveElements(elementsToRemove);
 
@@ -1260,6 +1256,7 @@ namespace ReadSharp.Ports.NReadability
       /* Clean out junk from the article content. */
       Clean(articleContentElement, "form");
       Clean(articleContentElement, "object");
+      Clean(articleContentElement, "meta");
 
       if (articleContentElement.GetElementsByTagName("h1").Count() == 1)
       {
@@ -1279,7 +1276,7 @@ namespace ReadSharp.Ports.NReadability
       /* Do these last as the previous stuff may have removed junk that will affect these. */
       CleanConditionally(articleContentElement, "table");
       CleanConditionally(articleContentElement, "ul");
-      CleanConditionally(articleContentElement, "div");
+      CleanConditionally(articleContentElement, "div", true);
 
       /* Remove extra paragraphs. */
       IEnumerable<XElement> paraElements = articleContentElement.GetElementsByTagName("p");
@@ -1460,7 +1457,7 @@ namespace ReadSharp.Ports.NReadability
     /// Cleans a <paramref name="rootElement" /> of all elements with name <paramref name="elementName" /> if they look fishy.
     /// "Fishy" is an algorithm based on content length, classnames, link density, number of images and embeds, etc.
     /// </summary>
-    internal void CleanConditionally(XElement rootElement, string elementName)
+    internal void CleanConditionally(XElement rootElement, string elementName, bool checkImageContainer = false)
     {
       if (elementName == null)
       {
@@ -1497,6 +1494,11 @@ namespace ReadSharp.Ports.NReadability
           int imgsCount = element.GetElementsByTagName("img").Count();
           int lisCount = element.GetElementsByTagName("li").Count();
           int inputsCount = element.GetElementsByTagName("input").Count();
+
+          if (checkImageContainer && imgsCount > 0 && _LikelyImageContainerRegex.IsMatch(element.GetClass()))
+          {
+            continue;
+          }
 
           // while counting embeds we omit video-embeds
           int embedsCount =
