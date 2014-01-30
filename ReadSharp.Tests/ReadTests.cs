@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -139,12 +138,14 @@ namespace ReadSharp.Tests
     }
 
     [Fact]
-    public async Task TestVergeReturnsFullArticle()
+    public async Task TestHintUrlsReturnFullArticles()
     {
       Article result = await reader.Read(new Uri("http://www.theverge.com/2013/11/18/5116360/nokia-lumia-1520-review"));
-      Debug.WriteLine(result.Content.Length);
       Assert.Contains("Three years ago, Nokia shipped over 110 million smartphones worldwide. ", result.Content);
       Assert.True(result.Content.Length > 6000);
+
+      result = await reader.Read(new Uri("http://blog.bufferapp.com/connections-in-the-brain-understanding-creativity-and-intelligenceconnections"));
+      Assert.Contains("The Tweet resulted in over 1,000 retweets", result.Content);
     }
   }
 }

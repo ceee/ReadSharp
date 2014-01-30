@@ -133,11 +133,11 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Regex _MailtoHrefRegex = new Regex("^\\s*mailto\\s*:", RegexOptions.IgnoreCase);
     private static readonly Regex _TitleWhitespacesCleanUpRegex = new Regex("\\s+");
 
-    private static readonly Dictionary<Regex, string> _articleContentElementHints =
-      new Dictionary<Regex, string>
-        {
-          { new Regex("^https?://(www|mobile)\\.theverge.com", RegexOptions.IgnoreCase), ".entry-body" },
-        };
+    private static readonly Dictionary<Regex, string> _articleContentElementHints = new Dictionary<Regex, string>
+    {
+      { new Regex("^https?://(www|mobile)\\.theverge.com", RegexOptions.IgnoreCase), ".entry-body" },
+      { new Regex("^https?://(www|blog)\\.bufferapp.com", RegexOptions.IgnoreCase), ".post" }
+    };
 
     #endregion
 
