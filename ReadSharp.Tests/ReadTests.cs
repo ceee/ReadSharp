@@ -138,16 +138,16 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task TestCriticalURIs()
     {
-      //Article result = await reader.Read(new Uri("http://wpcentral.com.feedsportal.com/c/33999/f/616880/s/35a02b5e/sc/15/l/0L0Swpcentral0N0Cgameloft0Ediscusses0Etheir0Enew0Egame0Ebrothers0Earms0E30Esons0Ewar0Eceslive/story01.htm"));
-      //Assert.NotEmpty(result.Content);
+      Article result = await reader.Read(new Uri("http://wpcentral.com.feedsportal.com/c/33999/f/616880/s/35a02b5e/sc/15/l/0L0Swpcentral0N0Cgameloft0Ediscusses0Etheir0Enew0Egame0Ebrothers0Earms0E30Esons0Ewar0Eceslive/story01.htm"));
+      Assert.NotEmpty(result.Content);
 
-      //result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
-      //Assert.NotEmpty(result.Content);
+      result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
+      Assert.NotEmpty(result.Content);
 
-      //result = await reader.Read(new Uri("http://bit.ly/KAh7FJ"));
-      //Assert.NotEmpty(result.Content);
+      result = await reader.Read(new Uri("http://bit.ly/KAh7FJ"));
+      Assert.NotEmpty(result.Content);
 
-      Article result = await reader.Read(new Uri("http://www.nytimes.com/2014/01/31/world/europe/ukraine-unrest.html?hp&_r=0"));
+      result = await reader.Read(new Uri("http://www.nytimes.com/2014/01/31/world/europe/ukraine-unrest.html?hp&_r=0"));
       Assert.True(result.Images != null && result.Images.Count > 0 && result.Images.SingleOrDefault(item => item.Uri.OriginalString == "http://static01.nyt.com/images/2014/01/31/world/31ukraine-cnd01/31ukraine-cnd01-articleLarge.jpg") != null);
     }
 

@@ -126,6 +126,7 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Regex _PageRegex = new Regex("pag(e|ing|inat)|([^a-z]|^)pag([^a-z]|$)", RegexOptions.IgnoreCase);
     private static readonly Regex _LikelyParagraphDivRegex = new Regex("text|para|parbase|paragraph|figure", RegexOptions.IgnoreCase);
     private static readonly Regex _LikelyImageContainerRegex = new Regex("image|figure|photo|media", RegexOptions.IgnoreCase);
+    private static readonly Regex _ReplaceAttributes = new Regex("^(data-|aria-|name|height|width|item|value|contenteditable|on|target|type)", RegexOptions.IgnoreCase);
 
     #endregion
 
@@ -1303,6 +1304,8 @@ namespace ReadSharp.Ports.NReadability
 
       RemoveElements(elementsToRemove);
 
+      CleanAttributes(articleContentElement);
+
       /* Remove br's that are directly before paragraphs. */
       articleContentElement.SetInnerHtml(_BreakBeforeParagraphRegex.Replace(articleContentElement.GetInnerHtml(), "<p"));
     }
@@ -1571,6 +1574,33 @@ namespace ReadSharp.Ports.NReadability
         }).Traverse(rootElement);
     }
 
+
+    internal void CleanAttributes(XElement rootElement)
+    {
+      new ElementsTraverser(
+        element =>
+        {
+          IEnumerable<XAttribute> attributes = element.Attributes();
+          List<XAttribute> attributesToRemove = new List<XAttribute>();
+
+          if (attributes == null)
+          {
+            return;
+          }
+
+
+          foreach (XAttribute attribute in attributes)
+          {
+            if (_ReplaceAttributes.IsMatch(attribute.Name.ToString()))
+            {
+              attributesToRemove.Add(attribute);
+            }
+          }
+
+          RemoveAttributes(attributesToRemove);
+        }).Traverse(rootElement);
+    }
+
     internal string GetUserStyleClass(string prefix, String enumStr)
     {
       var suffixSB = new StringBuilder();
@@ -1630,6 +1660,11 @@ namespace ReadSharp.Ports.NReadability
     private static void RemoveElements(IEnumerable<XElement> elementsToRemove)
     {
       elementsToRemove.ForEach(elementToRemove => elementToRemove.Remove());
+    }
+
+    private static void RemoveAttributes(IEnumerable<XAttribute> attributesToRemove)
+    {
+      attributesToRemove.ForEach(attributeToRemove => attributeToRemove.Remove());
     }
 
     private static void ResolveElementsUrls(XDocument document, string tagName, string attributeName, string url, Func<AttributeTransformationInput, AttributeTransformationResult> attributeValueTransformer)
