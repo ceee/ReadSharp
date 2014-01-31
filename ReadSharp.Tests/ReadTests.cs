@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -148,7 +147,13 @@ namespace ReadSharp.Tests
       Assert.NotEmpty(result.Content);
 
       result = await reader.Read(new Uri("http://www.nytimes.com/2014/01/31/world/europe/ukraine-unrest.html?hp&_r=0"));
-      Assert.True(result.Images != null && result.Images.Count > 0 && result.Images.SingleOrDefault(item => item.Uri.OriginalString == "http://static01.nyt.com/images/2014/01/31/world/31ukraine-cnd01/31ukraine-cnd01-articleLarge.jpg") != null);
+      Assert.True(result.Images != null && result.Images.Count > 0);
+
+      result = await reader.Read(new Uri("http://www.polygon.com/2013/2/25/4026668/tomb-raider-review"));
+      Assert.True(result.Images != null && result.Images.Count > 3 && result.Content.Contains("For a reboot of a series that had lost its focus and purpose"));
+
+      result = await reader.Read(new Uri("http://www.polygon.com/2014/1/31/5364728/super-bowl-xlviii-xbox-activities-new-york"));
+      Assert.True(result.Content.Contains("week for Super Bowl XLVIII") && result.Content.Contains("two tickets to the Super Bowl."));
     }
 
     [Fact]

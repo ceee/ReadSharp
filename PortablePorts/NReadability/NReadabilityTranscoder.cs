@@ -138,7 +138,8 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Dictionary<Regex, string> _articleContentElementHints = new Dictionary<Regex, string>
     {
       { new Regex("^https?://(www|mobile)\\.theverge.com", RegexOptions.IgnoreCase), ".entry-body" },
-      { new Regex("^https?://(www|blog)\\.bufferapp.com", RegexOptions.IgnoreCase), ".post" }
+      { new Regex("^https?://(www|blog)\\.bufferapp.com", RegexOptions.IgnoreCase), ".post" },
+      { new Regex("^https?://(www.)?polygon.com", RegexOptions.IgnoreCase), ".body" }
     };
 
     #endregion
