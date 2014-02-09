@@ -129,9 +129,14 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task TestDifferentCharsets()
     {
+      // chinese?
       string expectedTitle = "优艺客-专注互联网品牌建设-原韩雪冬网页设计工作室（公司站）";
       Article result = await reader.Read(new Uri("http://www.uelike.com"));
       Assert.Equal(result.Title, expectedTitle);
+
+      // arabic
+      result = await reader.Read(new Uri("http://www.it-scoop.com/2014/01/internet-of-things-google-nest/"));
+      Assert.NotEmpty(result.Content);
     }
 
     [Fact]
@@ -139,6 +144,9 @@ namespace ReadSharp.Tests
     {
       Article result = await reader.Read(new Uri("http://wpcentral.com.feedsportal.com/c/33999/f/616880/s/35a02b5e/sc/15/l/0L0Swpcentral0N0Cgameloft0Ediscusses0Etheir0Enew0Egame0Ebrothers0Earms0E30Esons0Ewar0Eceslive/story01.htm"));
       Assert.NotEmpty(result.Content);
+
+      result = await reader.Read(new Uri("http://www.fastcoexist.com/3016005/futurist-forum/10-creative-ideas-for-thriving-cities-of-the-future"));
+      Assert.Contains("1: 311", result.Content);
 
       result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
       Assert.NotEmpty(result.Content);
@@ -165,6 +173,16 @@ namespace ReadSharp.Tests
 
       result = await reader.Read(new Uri("http://blog.bufferapp.com/connections-in-the-brain-understanding-creativity-and-intelligenceconnections"));
       Assert.Contains("The Tweet resulted in over 1,000 retweets", result.Content);
+    }
+
+    [Fact]
+    public async Task AreMultipageArticlesWorking()
+    {
+      Article result = await reader.Read(new Uri("http://www.pcwelt.de/ratgeber/Acht_Tipps_fuer_die_sichere_Cloud-Google_Drive__Microsoft_Skydrive__Teamdrive-8205869.html?redirect=1"));
+      Assert.NotNull(result.NextPage);
+
+      result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/"));
+      Assert.NotNull(result.NextPage);
     }
   }
 }

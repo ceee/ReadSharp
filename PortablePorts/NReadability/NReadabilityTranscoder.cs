@@ -139,7 +139,9 @@ namespace ReadSharp.Ports.NReadability
     {
       { new Regex("^https?://(www|mobile)\\.theverge.com", RegexOptions.IgnoreCase), ".entry-body" },
       { new Regex("^https?://(www|blog)\\.bufferapp.com", RegexOptions.IgnoreCase), ".post" },
-      { new Regex("^https?://(www.)?polygon.com", RegexOptions.IgnoreCase), ".body" }
+      { new Regex("^https?://(www.)?polygon.com", RegexOptions.IgnoreCase), ".body" },
+      { new Regex("^https?://(www.)?gizmodo.com", RegexOptions.IgnoreCase), ".post-container" },
+      { new Regex("^https?://(www.)?it-scoop.com", RegexOptions.IgnoreCase), ".entry-content" }
     };
 
     #endregion
@@ -790,7 +792,22 @@ namespace ReadSharp.Ports.NReadability
         rootElement.GetElementsByTagName("a")
           .Where(aElement => aElement.Attribute("name") != null && aElement.Attribute("href") == null);
 
-      elementsToRemove.AddRange(anchorElements);
+      var elementsToBeReplaced = new List<XElement>();
+
+      foreach (XElement element in anchorElements)
+      {
+        if (!String.IsNullOrWhiteSpace(element.Value))
+        {
+          elementsToBeReplaced.Add(element);
+        }
+        else
+        {
+          elementsToRemove.Add(element);
+        }
+      }
+
+      elementsToBeReplaced.ForEach(element => element.ReplaceWith(element.Value));
+
       RemoveElements(elementsToRemove);
 
       /* Turn all double br's into p's and all font's into span's. */
