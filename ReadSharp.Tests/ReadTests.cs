@@ -184,5 +184,14 @@ namespace ReadSharp.Tests
       result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/"));
       Assert.NotNull(result.NextPage);
     }
+
+    [Fact]
+    public async Task DebugArticle()
+    {
+      string uri = "http://habrahabr.ru/post/211905/";
+
+      Article result = await reader.Read(new Uri(uri));
+      Assert.NotEmpty(result.Content);
+    }
   }
 }

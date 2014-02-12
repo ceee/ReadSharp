@@ -22,12 +22,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace ReadSharp.Ports.NReadability
 {
   public static class DomExtensions
   {
+    // filters control characters but allows only properly-formed surrogate sequences
+    private static Regex _invalidXMLChars = new Regex(@"(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\uFEFF\uFFFE\uFFFF]", RegexOptions.CultureInvariant);
+
+    /// <summary>
+    /// removes any unusual unicode characters that can't be encoded into XML
+    /// </summary>
+    public static string RemoveInvalidXMLChars(string text)
+    {
+      if (String.IsNullOrEmpty(text)) return "";
+      return _invalidXMLChars.Replace(text, "");
+    }
+
     #region XDocument extensions
 
     public static XElement GetBody(this XDocument document)
@@ -229,7 +242,17 @@ namespace ReadSharp.Ports.NReadability
 
       foreach (var childNode in container.Nodes())
       {
-        resultSb.Append(childNode.ToString(SaveOptions.DisableFormatting));
+        try
+        {
+          resultSb.Append(childNode.ToString(SaveOptions.DisableFormatting));
+        }
+        catch (ArgumentException)
+        {
+          if (childNode is XElement)
+          {
+            resultSb.Append(RemoveInvalidXMLChars((childNode as XElement).Value));
+          }
+        }
       }
 
       return resultSb.ToString();
