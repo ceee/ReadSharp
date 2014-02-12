@@ -158,6 +158,11 @@ namespace ReadSharp
       {
         throw new ReadException(exc.Message);
       }
+      finally
+      {
+        response.RawResponse.Dispose();
+        response.Stream.Dispose();
+      }
 
       // get images from article
       int id = 1;
@@ -293,34 +298,38 @@ namespace ReadSharp
     /// </exception>
     private async Task<Response> Request(Uri uri, CancellationToken cancellationToken)
     {
-      HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
       HttpResponseMessage response = null;
 
-      // make async request
-      try
+      using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri))
       {
-        response = await _httpClient.SendAsync(request, cancellationToken);
-      }
-      catch (HttpRequestException exc)
-      {
-        throw new ReadException(exc.Message);
-      }
+        // make async request
+        try
+        {
+          response = await _httpClient.SendAsync(request, cancellationToken);
+        }
+        catch (HttpRequestException exc)
+        {
+          throw new ReadException(exc.Message);
+        }
 
-      // validate HTTP response
-      if (response.StatusCode != HttpStatusCode.OK)
-      {
-        string exceptionString = String.Format("Request error: {0} ({1})", response.ReasonPhrase, (int)response.StatusCode);
+        // validate HTTP response
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+          string exceptionString = String.Format("Request error: {0} ({1})", response.ReasonPhrase, (int)response.StatusCode);
 
-        throw new ReadException(exceptionString);
+          throw new ReadException(exceptionString);
+        }
       }
 
       // read response
       Stream responseStream = await response.Content.ReadAsStreamAsync();
+      string charset = response.Content.Headers.ContentType.CharSet;
 
       return new Response()
       {
+        RawResponse = response,
         Stream = responseStream,
-        Charset = response.Content.Headers.ContentType.CharSet
+        Charset = charset
       };
     }
   }
