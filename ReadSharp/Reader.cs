@@ -323,13 +323,12 @@ namespace ReadSharp
 
       // read response
       Stream responseStream = await response.Content.ReadAsStreamAsync();
-      string charset = response.Content.Headers.ContentType.CharSet;
 
       return new Response()
       {
         RawResponse = response,
         Stream = responseStream,
-        Charset = charset
+        Charset = response.Content.Headers.ContentType.CharSet
       };
     }
   }
