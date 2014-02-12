@@ -162,6 +162,9 @@ namespace ReadSharp.Tests
 
       result = await reader.Read(new Uri("http://www.polygon.com/2014/1/31/5364728/super-bowl-xlviii-xbox-activities-new-york"));
       Assert.True(result.Content.Contains("week for Super Bowl XLVIII") && result.Content.Contains("two tickets to the Super Bowl."));
+
+      result = await reader.Read(new Uri("http://habrahabr.ru/post/211905/"));
+      Assert.NotEmpty(result.Content);
     }
 
     [Fact]
@@ -178,11 +181,17 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task AreMultipageArticlesWorking()
     {
-      Article result = await reader.Read(new Uri("http://www.pcwelt.de/ratgeber/Acht_Tipps_fuer_die_sichere_Cloud-Google_Drive__Microsoft_Skydrive__Teamdrive-8205869.html?redirect=1"));
-      Assert.NotNull(result.NextPage);
+      Article result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral"));
+      Assert.Equal(result.NextPage.ToString(), "http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral/seite-2");
+
+      result = await reader.Read(new Uri("http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754"));
+      Assert.Equal(result.NextPage.ToString(), "http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754-2");
+
+      result = await reader.Read(new Uri("http://www.pcwelt.de/ratgeber/Acht_Tipps_fuer_die_sichere_Cloud-Google_Drive__Microsoft_Skydrive__Teamdrive-8205869.html?redirect=1"));
+      Assert.Equal(result.NextPage.ToString(), "http://www.pcwelt.de/ratgeber/Google_Drive__Microsoft_Skydrive__Teamdrive-Tipp_3_-_Server-Standort_beachten-8205887.html");
 
       result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/"));
-      Assert.NotNull(result.NextPage);
+      Assert.Equal(result.NextPage.ToString(), "http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/2");
     }
 
     [Fact]

@@ -106,6 +106,7 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Regex _PositiveWeightRegex = new Regex("article|body|content|entry|hentry|main|page|pagination|post|text|blog|story|paragraph|instapaper_body|entry-content|article-body|entry-body", RegexOptions.IgnoreCase);
     private static readonly Regex _NegativeWeightRegex = new Regex("combx|comment|com-|contact|foot|footer|footnote|masthead|media|meta|outbrain|promo|related|scroll|shoutbox|sidebar|side|sponsor|shopping|tags|tool|widget", RegexOptions.IgnoreCase);
     private static readonly Regex _NegativeLinkParentRegex = new Regex("(stories|articles|news|documents|posts|notes|series|historie|artykuly|artykuły|wpisy|dokumenty|serie|geschichten|erzählungen|erzahlungen)", RegexOptions.IgnoreCase);
+    private static readonly Regex _PositiveNavPaginationRegex = new Regex("pagination|pages|numbers|seite|page", RegexOptions.IgnoreCase);
     private static readonly Regex _Extraneous = new Regex("print|archive|comment|discuss|e[-]?mail|share|reply|all|login|sign|single|also", RegexOptions.IgnoreCase);
     private static readonly Regex _DivToPElementsRegex = new Regex("<(a|blockquote|dl|div|img|ol|p|pre|table|ul)", RegexOptions.IgnoreCase);
     private static readonly Regex _EndOfSentenceRegex = new Regex("\\.( |$)", RegexOptions.Multiline);
@@ -120,7 +121,7 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Regex _ArticleTitleDashRegex3 = new Regex("[^\\|\\-]*[\\|\\-](.*)");
     private static readonly Regex _ArticleTitleColonRegex1 = new Regex(".*:(.*)");
     private static readonly Regex _ArticleTitleColonRegex2 = new Regex("[^:]*[:](.*)");
-    private static readonly Regex _NextLink = new Regex(@"(next|weiter|continue|dalej|następna|nastepna>([^\|]|$)|�([^\|]|$))", RegexOptions.IgnoreCase);
+    private static readonly Regex _NextLink = new Regex(@"(next|weiter|nächste|nächstes|^([0-9]\.)|continue|dalej|następna|nastepna>([^\|]|$)|�([^\|]|$))", RegexOptions.IgnoreCase);
     private static readonly Regex _NextStoryLink = new Regex("(story|article|news|document|post|note|series|historia|artykul|artykuł|wpis|dokument|seria|geschichte|erzählung|erzahlung|artikel|serie)", RegexOptions.IgnoreCase);
     private static readonly Regex _PrevLink = new Regex("(prev|earl|[^b]old|new|wstecz|poprzednia|<|�)", RegexOptions.IgnoreCase);
     private static readonly Regex _PageRegex = new Regex("pag(e|ing|inat)|([^a-z]|^)pag([^a-z]|$)", RegexOptions.IgnoreCase);
@@ -782,7 +783,11 @@ namespace ReadSharp.Ports.NReadability
 
       /* Remove all nav tags. */
       elementsToRemove.Clear();
-      elementsToRemove.AddRange(rootElement.GetElementsByTagName("nav"));
+      elementsToRemove.AddRange(rootElement.GetElementsByTagName("nav").Where(item =>
+      {
+        string classList = item.GetClass();
+        return String.IsNullOrEmpty(classList) || (classList != null && !_PositiveNavPaginationRegex.IsMatch(classList));
+      }));
       RemoveElements(elementsToRemove);
 
       /* Remove all anchors. */
