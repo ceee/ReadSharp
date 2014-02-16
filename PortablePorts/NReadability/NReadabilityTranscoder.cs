@@ -127,7 +127,7 @@ namespace ReadSharp.Ports.NReadability
     private static readonly Regex _PageRegex = new Regex("pag(e|ing|inat)|([^a-z]|^)pag([^a-z]|$)", RegexOptions.IgnoreCase);
     private static readonly Regex _LikelyParagraphDivRegex = new Regex("text|para|parbase|paragraph|figure", RegexOptions.IgnoreCase);
     private static readonly Regex _LikelyImageContainerRegex = new Regex("image|figure|photo|media", RegexOptions.IgnoreCase);
-    private static readonly Regex _ReplaceAttributes = new Regex("^(data-|aria-|name|height|width|item|value|contenteditable|on|target|type)", RegexOptions.IgnoreCase);
+    private static readonly Regex _ReplaceAttributes = new Regex("^(data-|aria-|name|height|width|item|value|contenteditable|on|target|type|align|direction)", RegexOptions.IgnoreCase);
 
     #endregion
 
