@@ -1300,11 +1300,17 @@ namespace ReadSharp.Ports.NReadability
       /* Do these last as the previous stuff may have removed junk that will affect these. */
       CleanConditionally(articleContentElement, "table");
       CleanConditionally(articleContentElement, "ul");
-      CleanConditionally(articleContentElement, "div", true);
+      //CleanConditionally(articleContentElement, "div", true);
 
       /* Remove extra paragraphs. */
-      IEnumerable<XElement> paraElements = articleContentElement.GetElementsByTagName("p");
+      List<XElement> paraElements = articleContentElement.GetElementsByTagName("p").ToList();
+      IEnumerable<XElement> divElements = articleContentElement.GetElementsByTagName("div");
       var elementsToRemove = new List<XElement>();
+
+      if (divElements != null)
+      {
+        paraElements.AddRange(divElements);
+      }
 
       foreach (XElement paraElement in paraElements)
       {

@@ -100,16 +100,6 @@ namespace ReadSharp.Tests
 
 
     [Fact]
-    public async Task ArePropertiesCorrectlyAssignedWithEmptyArticle()
-    {
-      Article result = await reader.Read(new Uri("https://docs.google.com/presentation/d/1n4NyG4uPRjAA8zn_pSQ_Ket0RhcWC6QlZ6LMjKeECo0/preview?sle=true#slide=id.g178014302_016"));
-      Assert.False(result.ContentExtracted);
-      Assert.True(result.WordCount == 7);
-      Assert.Equal(result.Title, result.PlainContent);
-    }
-
-
-    [Fact]
     public async Task TestCzechCharsets()
     {
       string expectedTitle = "Kouzelné české Vánoce";
@@ -136,34 +126,6 @@ namespace ReadSharp.Tests
 
       // arabic
       result = await reader.Read(new Uri("http://www.it-scoop.com/2014/01/internet-of-things-google-nest/"));
-      Assert.NotEmpty(result.Content);
-    }
-
-    [Fact]
-    public async Task TestCriticalURIs()
-    {
-      Article result = await reader.Read(new Uri("http://wpcentral.com.feedsportal.com/c/33999/f/616880/s/35a02b5e/sc/15/l/0L0Swpcentral0N0Cgameloft0Ediscusses0Etheir0Enew0Egame0Ebrothers0Earms0E30Esons0Ewar0Eceslive/story01.htm"));
-      Assert.NotEmpty(result.Content);
-
-      result = await reader.Read(new Uri("http://www.fastcoexist.com/3016005/futurist-forum/10-creative-ideas-for-thriving-cities-of-the-future"));
-      Assert.Contains("1: 311", result.Content);
-
-      result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
-      Assert.NotEmpty(result.Content);
-
-      result = await reader.Read(new Uri("http://bit.ly/KAh7FJ"));
-      Assert.NotEmpty(result.Content);
-
-      result = await reader.Read(new Uri("http://www.nytimes.com/2014/01/31/world/europe/ukraine-unrest.html?hp&_r=0"));
-      Assert.True(result.Images != null && result.Images.Count > 0);
-
-      result = await reader.Read(new Uri("http://www.polygon.com/2013/2/25/4026668/tomb-raider-review"));
-      Assert.True(result.Images != null && result.Images.Count > 3 && result.Content.Contains("For a reboot of a series that had lost its focus and purpose"));
-
-      result = await reader.Read(new Uri("http://www.polygon.com/2014/1/31/5364728/super-bowl-xlviii-xbox-activities-new-york"));
-      Assert.True(result.Content.Contains("week for Super Bowl XLVIII") && result.Content.Contains("two tickets to the Super Bowl."));
-
-      result = await reader.Read(new Uri("http://habrahabr.ru/post/211905/"));
       Assert.NotEmpty(result.Content);
     }
 
@@ -195,12 +157,51 @@ namespace ReadSharp.Tests
     }
 
     [Fact]
+    public async Task TestCriticalURIs()
+    {
+      Article result = await reader.Read(new Uri("http://wpcentral.com.feedsportal.com/c/33999/f/616880/s/35a02b5e/sc/15/l/0L0Swpcentral0N0Cgameloft0Ediscusses0Etheir0Enew0Egame0Ebrothers0Earms0E30Esons0Ewar0Eceslive/story01.htm"));
+      Assert.NotEmpty(result.Content);
+
+      result = await reader.Read(new Uri("http://www.fastcoexist.com/3016005/futurist-forum/10-creative-ideas-for-thriving-cities-of-the-future"));
+      Assert.Contains("1: 311", result.Content);
+
+      result = await reader.Read(new Uri("http://msdn.microsoft.com/en-us/library/windows/apps/hh464925.aspx"));
+      Assert.NotEmpty(result.Content);
+
+      result = await reader.Read(new Uri("http://bit.ly/KAh7FJ"));
+      Assert.NotEmpty(result.Content);
+
+      result = await reader.Read(new Uri("http://www.nytimes.com/2014/01/31/world/europe/ukraine-unrest.html?hp&_r=0"));
+      Assert.True(result.Images != null && result.Images.Count > 0);
+
+      result = await reader.Read(new Uri("http://www.polygon.com/2013/2/25/4026668/tomb-raider-review"));
+      Assert.True(result.Images != null && result.Images.Count > 3 && result.Content.Contains("For a reboot of a series that had lost its focus and purpose"));
+
+      result = await reader.Read(new Uri("http://www.polygon.com/2014/1/31/5364728/super-bowl-xlviii-xbox-activities-new-york"));
+      Assert.True(result.Content.Contains("week for Super Bowl XLVIII") && result.Content.Contains("two tickets to the Super Bowl."));
+
+      result = await reader.Read(new Uri("http://habrahabr.ru/post/211905/"));
+      Assert.NotEmpty(result.Content);
+
+      result = await reader.Read(new Uri("http://www.dgtle.com/article-5682-1.html"));
+      Assert.Contains("http://img.dgtle.com/forum/201402/13/162237x8oumb8i0i0y0087.jpeg!680px", result.Content);
+    }
+
+    [Fact]
+    public async Task TestCriticalURIs2()
+    {
+      Article result = await reader.Read(new Uri("http://www.dgtle.com/article-5682-1.html"));
+      Assert.Contains("http://img.dgtle.com/forum/201402/13/162237x8oumb8i0i0y0087.jpeg!680px", result.Content);
+    }
+
+
+    [Fact]
     public async Task DebugArticle()
     {
-      string uri = "http://habrahabr.ru/post/211905/";
+      string uri = "http://www.dgtle.com/article-5682-1.html";
 
       Article result = await reader.Read(new Uri(uri));
-      Assert.NotEmpty(result.Content);
+      Assert.Contains("http://img.dgtle.com/forum/201402/13/162237x8oumb8i0i0y0087.jpeg!680px", result.Content);
     }
   }
 }
