@@ -157,6 +157,13 @@ namespace ReadSharp.Tests
     }
 
     [Fact]
+    public async Task AreSinglepageArticlesNotPopulatingNextPage()
+    {
+      Article result = await reader.Read(new Uri("http://www.buzzfeed.com/mattlynley/the-16-most-interesting-things-to-come-out-of-bill-gates-qa"));
+      Assert.Null(result.NextPage);
+    }
+
+    [Fact]
     public async Task TestCriticalURIs()
     {
       Article result = await reader.Read(new Uri("http://wpcentral.com.feedsportal.com/c/33999/f/616880/s/35a02b5e/sc/15/l/0L0Swpcentral0N0Cgameloft0Ediscusses0Etheir0Enew0Egame0Ebrothers0Earms0E30Esons0Ewar0Eceslive/story01.htm"));
@@ -192,6 +199,9 @@ namespace ReadSharp.Tests
     {
       Article result = await reader.Read(new Uri("http://www.dgtle.com/article-5682-1.html"));
       Assert.Contains("http://img.dgtle.com/forum/201402/13/162237x8oumb8i0i0y0087.jpeg!680px", result.Content);
+
+      result = await reader.Read(new Uri("http://m.spiegel.de/spiegelgeschichte/a-946060.html"));
+      Assert.DoesNotContain("Detecting browser settings", result.Content);
     }
 
 

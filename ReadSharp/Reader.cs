@@ -34,6 +34,14 @@ namespace ReadSharp
     /// </summary>
     protected NReadabilityTranscoder _transcoder;
 
+    /// <summary>
+    /// Redirect faulty mobile URIs to desktop equivalents
+    /// </summary>
+    private static readonly Dictionary<string, string> _redirectFaultyMobileURIs = new Dictionary<string, string>
+    {
+      { "//m.spiegel.de", "//www.spiegel.de" }
+    };
+
 
 
     /// <summary>
@@ -106,10 +114,20 @@ namespace ReadSharp
       Response response;
       TranscodingResult transcodingResult;
       Encoding encoding;
+      string uriString = uri.OriginalString;
 
       if (options == null)
       {
         options = ReadOptions.CreateDefault();
+      }
+
+      // replace domain when URI is marked as faulty
+      foreach (string faultyUri in _redirectFaultyMobileURIs.Keys)
+      {
+        if (uriString.Contains(faultyUri))
+        {
+          uri = new Uri(uriString.Replace(faultyUri, _redirectFaultyMobileURIs[faultyUri]));
+        }
       }
 
       // make async request
