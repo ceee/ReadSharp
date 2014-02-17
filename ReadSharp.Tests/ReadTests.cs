@@ -170,6 +170,26 @@ namespace ReadSharp.Tests
     }
 
     [Fact]
+    public async Task AreMultiPagesDownloadedAndMergedCorrectly()
+    {
+      ReadOptions options = new ReadOptions() { MultipageDownload = true };
+
+      Article result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral"), options);
+      Assert.Equal(result.PageCount, 2);
+      Assert.True(result.WordCount > 800);
+
+      result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral"));
+      Assert.True(result.PageCount == 1 && result.WordCount < 500);
+
+      result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/"), options);
+      Assert.Equal(result.PageCount, 7);
+      Assert.True(result.WordCount > 13000 && result.Images.Count > 10);
+
+      result = await reader.Read(new Uri("http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754"), options);
+      Assert.Equal(result.PageCount, 2);
+    }
+
+    [Fact]
     public async Task TestCriticalURIs()
     {
       Article result = await reader.Read(new Uri("http://wpcentral.com.feedsportal.com/c/33999/f/616880/s/35a02b5e/sc/15/l/0L0Swpcentral0N0Cgameloft0Ediscusses0Etheir0Enew0Egame0Ebrothers0Earms0E30Esons0Ewar0Eceslive/story01.htm"));
@@ -214,10 +234,13 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task DebugArticle()
     {
-      string uri = "http://www.dgtle.com/article-5682-1.html";
+      string uri = "http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral";
 
-      Article result = await reader.Read(new Uri(uri));
-      Assert.Contains("http://img.dgtle.com/forum/201402/13/162237x8oumb8i0i0y0087.jpeg!680px", result.Content);
+      Article result = await reader.Read(new Uri(uri), new ReadOptions()
+      {
+        MultipageDownload = true
+      });
+      Assert.Equal(result.PageCount, 2);
     }
   }
 }

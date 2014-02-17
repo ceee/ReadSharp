@@ -1,14 +1,14 @@
-﻿using System.IO;
-using System.Net.Http;
+﻿using ReadSharp.Ports.NReadability;
+using System.Text;
 
 namespace ReadSharp
 {
   internal class Response
   {
-    public HttpResponseMessage RawResponse { get; set; }
+    public TranscodingResult TranscodingResult { get; set; }
 
-    public Stream Stream { get; set; }
+    public Encoding Encoding { get; set; }
 
-    public string Charset { get; set; }
+    public int PageCount { get; set; }
   }
 }

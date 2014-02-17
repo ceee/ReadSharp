@@ -29,14 +29,22 @@ namespace ReadSharp
     public bool UseMobileUserAgent { get; set; }
 
     /// <summary>
-    /// Used UserAgent for HTTP request
+    /// Used UserAgent for HTTP request.
     /// </summary>
     public string UserAgent { get; set; }
 
     /// <summary>
-    /// Used mobile UserAgent for HTTP request
+    /// Used mobile UserAgent for HTTP request.
     /// </summary>
     public string UserAgentMobile { get; set; }
+
+    /// <summary>
+    /// Gets or sets the download limit for articles with multiple pages (default: 10).
+    /// </summary>
+    /// <value>
+    /// The multipage limit.
+    /// </value>
+    public int MultipageLimit { get; set; }
 
     /// <summary>
     /// Creates the default HTTP options.
@@ -50,7 +58,8 @@ namespace ReadSharp
         UserAgent = "Mozilla/5.0 (Windows NT 6.3; WOW64{0}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1736.2 Safari/537.36 OPR/20.0.1380.1",
         UseMobileUserAgent = false,
         RequestTimeout = null,
-        CustomHttpHandler = null
+        CustomHttpHandler = null,
+        MultipageLimit = 10
       };
     }
   }

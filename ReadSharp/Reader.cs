@@ -112,8 +112,6 @@ namespace ReadSharp
     public async Task<Article> Read(Uri uri, ReadOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
     {
       Response response;
-      TranscodingResult transcodingResult;
-      Encoding encoding;
       string uriString = uri.OriginalString;
 
       if (options == null)
@@ -131,61 +129,12 @@ namespace ReadSharp
       }
 
       // make async request
-      try
-      {
-        // get HTML string from URI
-        response = await Request(uri, cancellationToken);
-      }
-      catch (HttpRequestException exc)
-      {
-        throw new ReadException(exc.Message);
-      }
-
-      // handle deep links
-      if (options.UseDeepLinks)
-      {
-        _transcoder.AnchorHrefTranformer = ReverseDeepLinks;
-      }
-      else
-      {
-        _transcoder.AnchorHrefTranformer = null;
-      }
-
-      // readability
-      try
-      {
-        // charset found in HTTP headers
-        encoding = _encoder.GetEncodingFromString(response.Charset);
-
-        // transcode content
-        transcodingResult = ExtractReadableInformation(uri, response.Stream, options, encoding);
-
-        // get encoding found in HTML
-        encoding = _encoder.GetEncodingFromString(transcodingResult.Charset);
-
-        // extract again if encoding didn't match or failed to retrieve
-        if (encoding != null && (
-          String.IsNullOrEmpty(response.Charset)
-          ||
-          !String.Equals(response.Charset, transcodingResult.Charset, StringComparison.OrdinalIgnoreCase)))
-        {
-          transcodingResult = ExtractReadableInformation(uri, response.Stream, options, encoding);
-        }
-      }
-      catch (Exception exc)
-      {
-        throw new ReadException(exc.Message);
-      }
-      finally
-      {
-        response.RawResponse.Dispose();
-        response.Stream.Dispose();
-      }
+      response = await Request(uri, options, null, cancellationToken);
 
       // get images from article
       int id = 1;
 
-      List<ArticleImage> images = transcodingResult.Images.Select<XElement, ArticleImage>(image =>
+      List<ArticleImage> images = response.TranscodingResult.Images.Select<XElement, ArticleImage>(image =>
       {
         Uri imageUri;
         Uri.TryCreate(image.GetAttributeValue("src", null), UriKind.Absolute, out imageUri);
@@ -205,7 +154,7 @@ namespace ReadSharp
 
       try
       {
-        plainContent = HtmlUtilities.ConvertToPlainText(transcodingResult.ExtractedContent);
+        plainContent = HtmlUtilities.ConvertToPlainText(response.TranscodingResult.ExtractedContent);
         wordCount = HtmlUtilities.CountWords(plainContent);
       }
       catch
@@ -216,17 +165,18 @@ namespace ReadSharp
       // create article
       return new Article()
       {
-        Title = transcodingResult.ExtractedTitle,
-        Description = transcodingResult.ExtractedDescription,
-        Content = transcodingResult.ExtractedContent,
-        ContentExtracted = transcodingResult.ContentExtracted ? wordCount > 0 : false,
+        Title = response.TranscodingResult.ExtractedTitle,
+        Description = response.TranscodingResult.ExtractedDescription,
+        Content = response.TranscodingResult.ExtractedContent,
+        ContentExtracted = response.TranscodingResult.ContentExtracted ? wordCount > 0 : false,
         PlainContent = plainContent,
         WordCount = wordCount,
-        FrontImage = transcodingResult.ExtractedImage,
+        PageCount = response.PageCount,
+        FrontImage = response.TranscodingResult.ExtractedImage,
         Images = images,
-        Favicon = transcodingResult.ExtractedFavicon,
-        NextPage = transcodingResult.NextPageUrl != null ? new Uri(transcodingResult.NextPageUrl, UriKind.Absolute) : null,
-        Encoding = _encoder.GetEncodingFromString(response.Charset) ?? encoding ?? null
+        Favicon = response.TranscodingResult.ExtractedFavicon,
+        NextPage = response.TranscodingResult.NextPageUrl != null ? new Uri(response.TranscodingResult.NextPageUrl, UriKind.Absolute) : null,
+        Encoding = response.Encoding
       };
     }
 
@@ -310,13 +260,17 @@ namespace ReadSharp
     /// Fetches a resource
     /// </summary>
     /// <param name="uri">The URI.</param>
+    /// <param name="options">The options.</param>
+    /// <param name="isContinuedPage">if set to <c>true</c> [is continued page].</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
     /// <exception cref="ReadException">
     /// </exception>
-    private async Task<Response> Request(Uri uri, CancellationToken cancellationToken)
+    private async Task<Response> Request(Uri uri, ReadOptions options, Response previousResponse, CancellationToken cancellationToken)
     {
       HttpResponseMessage response = null;
+      TranscodingResult transcodingResult;
+      Encoding encoding;
 
       using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri))
       {
@@ -342,11 +296,111 @@ namespace ReadSharp
       // read response
       Stream responseStream = await response.Content.ReadAsStreamAsync();
 
+      string charset = response.Content.Headers.ContentType.CharSet;
+
+      // handle deep links
+      if (options.UseDeepLinks)
+      {
+        _transcoder.AnchorHrefTranformer = ReverseDeepLinks;
+      }
+      else
+      {
+        _transcoder.AnchorHrefTranformer = null;
+      }
+
+      // readability
+      try
+      {
+        // charset found in HTTP headers
+        encoding = _encoder.GetEncodingFromString(charset);
+
+        // transcode content
+        transcodingResult = ExtractReadableInformation(uri, responseStream, options, encoding);
+
+        // get encoding found in HTML
+        encoding = _encoder.GetEncodingFromString(transcodingResult.Charset);
+
+        // extract again if encoding didn't match or failed to retrieve
+        if (encoding != null && (
+          String.IsNullOrEmpty(charset)
+          ||
+          !String.Equals(charset, transcodingResult.Charset, StringComparison.OrdinalIgnoreCase)))
+        {
+          transcodingResult = ExtractReadableInformation(uri, responseStream, options, encoding);
+        }
+      }
+      catch (Exception exc)
+      {
+        throw new ReadException(exc.Message);
+      }
+      finally
+      {
+        response.Dispose();
+        responseStream.Dispose();
+      }
+
+      Response newResponse = new Response()
+      {
+        TranscodingResult = transcodingResult,
+        PageCount = 1,
+        Encoding = encoding
+      };
+
+      // multiple pages are available
+      if (options.MultipageDownload && transcodingResult.NextPageUrl != null && (previousResponse == null || (previousResponse != null && previousResponse.PageCount < 10)))
+      {
+        return await Request(new Uri(transcodingResult.NextPageUrl), new ReadOptions()
+        {
+          HasNoHeadline = true,
+          PrettyPrint = options.PrettyPrint,
+          UseDeepLinks = options.UseDeepLinks,
+          MultipageDownload = true
+        }, previousResponse != null ? MergeResponses(previousResponse, newResponse) : newResponse, cancellationToken);
+      }
+
+      // this is not the first page
+      if (previousResponse != null)
+      {
+        return MergeResponses(previousResponse, newResponse);
+      }
+
+      return newResponse;
+    }
+
+
+    private Response MergeResponses(Response original, Response append)
+    {
+      if (original == null)
+      {
+        return append;
+      }
+      if (append == null)
+      {
+        return original;
+      }
+
+      TranscodingResult mergedResult = original.TranscodingResult;
+
+      mergedResult.ExtractedContent += String.Format("<div class=\"readability-nextpage\" data-page=\"{0}\"></div>{1}", (original.PageCount + 1).ToString(), append.TranscodingResult.ExtractedContent);
+
+      if (mergedResult.Images == null || mergedResult.Images.Count() == 0)
+      {
+        mergedResult.Images = append.TranscodingResult.Images;
+      }
+      else if (append.TranscodingResult.Images != null && append.TranscodingResult.Images.Count() > 0)
+      {
+        List<XElement> images = mergedResult.Images.ToList();
+        images.AddRange(append.TranscodingResult.Images);
+        mergedResult.Images = images;
+      }
+
+      mergedResult.NextPageUrl = append.TranscodingResult.NextPageUrl;
+
       return new Response()
       {
-        RawResponse = response,
-        Stream = responseStream,
-        Charset = response.Content.Headers.ContentType.CharSet
+        PageCount = original.PageCount + 1,
+        Encoding = original.Encoding,
+        TranscodingResult = mergedResult
       };
     }
   }

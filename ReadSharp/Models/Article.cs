@@ -58,6 +58,14 @@ namespace ReadSharp
     public int WordCount { get; set; }
 
     /// <summary>
+    /// Gets or sets the page count.
+    /// </summary>
+    /// <value>
+    /// The page count.
+    /// </value>
+    public int PageCount { get; set; }
+
+    /// <summary>
     /// Gets or sets the front image.
     /// </summary>
     /// <value>
