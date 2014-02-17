@@ -149,9 +149,6 @@ namespace ReadSharp.Tests
       result = await reader.Read(new Uri("http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754"));
       Assert.Equal(result.NextPage.ToString(), "http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754-2");
 
-      result = await reader.Read(new Uri("http://www.pcwelt.de/ratgeber/Acht_Tipps_fuer_die_sichere_Cloud-Google_Drive__Microsoft_Skydrive__Teamdrive-8205869.html?redirect=1"));
-      Assert.Equal(result.NextPage.ToString(), "http://www.pcwelt.de/ratgeber/Google_Drive__Microsoft_Skydrive__Teamdrive-Tipp_3_-_Server-Standort_beachten-8205887.html");
-
       result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/"));
       Assert.Equal(result.NextPage.ToString(), "http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/2");
     }
@@ -160,6 +157,15 @@ namespace ReadSharp.Tests
     public async Task AreSinglepageArticlesNotPopulatingNextPage()
     {
       Article result = await reader.Read(new Uri("http://www.buzzfeed.com/mattlynley/the-16-most-interesting-things-to-come-out-of-bill-gates-qa"));
+      Assert.Null(result.NextPage);
+
+      result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/7/"));
+      Assert.Null(result.NextPage);
+
+      result = await reader.Read(new Uri("http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754-2"));
+      Assert.Null(result.NextPage);
+
+      result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral/seite-2"));
       Assert.Null(result.NextPage);
     }
 

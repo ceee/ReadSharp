@@ -542,6 +542,14 @@ namespace ReadSharp.Ports.NReadability
           linkObj.Score -= 200;
         }
 
+        double urlComparity = StringCompare(url, linkHref);
+
+        /* If the next page differs from the original too much */
+        if (StringCompare(url, linkHref) < 80)
+        {
+          linkObj.Score -= 200;
+        }
+
         /* If any ancestor node contains page or paging or paginat */
         XElement parentNode = linkElement.Parent;
         bool positiveNodeMatch = false;
@@ -653,6 +661,37 @@ namespace ReadSharp.Ports.NReadability
 
       return null;
     }
+
+
+    internal static double StringCompare(string a, string b)
+    {
+      // Same string, no iteration needed.
+      if (a == b)
+      {
+        return 100;
+      }
+      // One is empty, second is not
+      if ((a.Length == 0) || (b.Length == 0))
+      {
+        return 0;
+      }
+
+      double maxLen = a.Length > b.Length ? a.Length : b.Length;
+      int minLen = a.Length < b.Length ? a.Length : b.Length;
+      int sameCharAtIndex = 0;
+
+      // Compare char by char
+      for (int i = 0; i < minLen; i++)
+      {
+        if (a[i] == b[i])
+        {
+          sameCharAtIndex++;
+        }
+      }
+
+      return sameCharAtIndex / maxLen * 100;
+    }
+
 
     /// <summary>
     /// Find a cleaned up version of the current URL, to use for comparing links for possible next-pageyness.
