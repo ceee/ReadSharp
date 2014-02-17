@@ -347,22 +347,27 @@ namespace ReadSharp
       };
 
       // multiple pages are available
-      if (options.MultipageDownload && transcodingResult.NextPageUrl != null && (previousResponse == null || (previousResponse != null && previousResponse.PageCount < 10)))
+      try
       {
-        return await Request(new Uri(transcodingResult.NextPageUrl), new ReadOptions()
+        if (options.MultipageDownload && transcodingResult.NextPageUrl != null && (previousResponse == null || (previousResponse != null && previousResponse.PageCount < 10)))
         {
-          HasNoHeadline = true,
-          PrettyPrint = options.PrettyPrint,
-          UseDeepLinks = options.UseDeepLinks,
-          MultipageDownload = true
-        }, previousResponse != null ? MergeResponses(previousResponse, newResponse) : newResponse, cancellationToken);
-      }
+          return await Request(new Uri(transcodingResult.NextPageUrl), new ReadOptions()
+          {
+            HasNoHeadline = true,
+            PrettyPrint = options.PrettyPrint,
+            UseDeepLinks = options.UseDeepLinks,
+            MultipageDownload = true
+          }, previousResponse != null ? MergeResponses(previousResponse, newResponse) : newResponse, cancellationToken);
+        }
 
-      // this is not the first page
-      if (previousResponse != null)
-      {
-        return MergeResponses(previousResponse, newResponse);
+        // this is not the first page
+        if (previousResponse != null)
+        {
+          return MergeResponses(previousResponse, newResponse);
+        }
       }
+      // silently fail when next pages fail to download
+      catch { }
 
       return newResponse;
     }
