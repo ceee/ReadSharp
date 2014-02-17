@@ -142,7 +142,9 @@ namespace ReadSharp.Ports.NReadability
       { new Regex("^https?://(www|blog)\\.bufferapp.com", RegexOptions.IgnoreCase), ".post" },
       { new Regex("^https?://(www.)?polygon.com", RegexOptions.IgnoreCase), ".body" },
       { new Regex("^https?://(www.)?gizmodo.com", RegexOptions.IgnoreCase), ".post-container" },
-      { new Regex("^https?://(www.)?it-scoop.com", RegexOptions.IgnoreCase), ".entry-content" }
+      { new Regex("^https?://(www.)?it-scoop.com", RegexOptions.IgnoreCase), ".entry-content" },
+      { new Regex("^https?://(m\\.|www\\.)?youtube.com", RegexOptions.IgnoreCase), "#watch-description-content" },
+      { new Regex("^https?://(www.)?vimeo.com", RegexOptions.IgnoreCase), ".description_wrapper" }
     };
 
     #endregion
@@ -545,9 +547,28 @@ namespace ReadSharp.Ports.NReadability
         double urlComparity = StringCompare(url, linkHref);
 
         /* If the next page differs from the original too much */
-        if (StringCompare(url, linkHref) < 80)
+        if (urlComparity < 80)
         {
           linkObj.Score -= 200;
+        }
+        else if (urlComparity > 95 && url.Length <= linkHref.Length)
+        {
+          try
+          {
+            string originalLinkHrefNumber = Regex.Match(url.Replace(articleBaseUrl, ""), @"\d+").Value;
+            string linkHrefNumber = Regex.Match(linkHref.Replace(articleBaseUrl, ""), @"\d+").Value;
+
+            if (originalLinkHrefNumber == "")
+            {
+              originalLinkHrefNumber = "0";
+            }
+
+            if (originalLinkHrefNumber != null && linkHrefNumber != null && linkHrefNumber.Length < 3 && linkHref.EndsWith(linkHrefNumber) && Convert.ToByte(originalLinkHrefNumber) < Convert.ToByte(linkHrefNumber))
+            {
+              linkObj.Score += 75;
+            }
+          }
+          catch { }
         }
 
         /* If any ancestor node contains page or paging or paginat */

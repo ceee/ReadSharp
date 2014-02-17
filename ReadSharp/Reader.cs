@@ -214,7 +214,7 @@ namespace ReadSharp
         DomSerializationParams = new DomSerializationParams()
         {
           BodyOnly = !options.HasHeaderTags,
-          NoHeadline = options.HasNoHeadline,
+          NoHeadline = !options.HasHeadline,
           PrettyPrint = options.PrettyPrint,
           DontIncludeContentTypeMetaElement = true,
           DontIncludeMobileSpecificMetaElements = true,
@@ -352,6 +352,14 @@ namespace ReadSharp
         Encoding = encoding
       };
 
+      // in same special cases their are multiple pages, which are only comments or do not contain new content.
+      // if this is the case we will break here and return the first page only.
+      if (previousResponse != null && previousResponse.TranscodingResult.ExtractedContent == transcodingResult.ExtractedContent)
+      {
+        previousResponse.TranscodingResult.NextPageUrl = null;
+        return previousResponse;
+      }
+
       // multiple pages are available
       try
       {
@@ -359,7 +367,6 @@ namespace ReadSharp
         {
           return await Request(new Uri(transcodingResult.NextPageUrl), new ReadOptions()
           {
-            HasNoHeadline = true,
             PrettyPrint = options.PrettyPrint,
             UseDeepLinks = options.UseDeepLinks,
             MultipageDownload = true

@@ -17,7 +17,7 @@ namespace ReadSharp
     /// <value>
     ///   <c>true</c> if [has no headline]; otherwise, <c>false</c>.
     /// </value>
-    public bool HasNoHeadline { get; set; }
+    public bool HasHeadline { get; set; }
 
     /// <summary>
     /// Are deep links with hashes not transformed to absolute URIs (default: false).
@@ -52,7 +52,7 @@ namespace ReadSharp
       return new ReadOptions()
       {
         HasHeaderTags = false,
-        HasNoHeadline = false,
+        HasHeadline = false,
         UseDeepLinks = false,
         PrettyPrint = false,
         MultipageDownload = false

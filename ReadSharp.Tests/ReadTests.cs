@@ -22,7 +22,6 @@ namespace ReadSharp.Tests
       Article result = await reader.Read(new Uri("http://frontendplay.com/story/4/http-caching-demystified-part-2-implementation"));
 
       Assert.DoesNotContain("<!DOCTYPE html>", result.Content);
-      Assert.Contains("<h1>", result.Content);
       Assert.True(result.Content.Length > 15000);
     }
 
@@ -32,7 +31,6 @@ namespace ReadSharp.Tests
     {
       Article result = await reader.Read(new Uri("http://frontendplay.com/story/4/http-caching-demystified-part-2-implementation"), new ReadOptions()
       {
-        HasNoHeadline = true,
         HasHeaderTags = true
       });
 
@@ -143,7 +141,10 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task AreMultipageArticlesWorking()
     {
-      Article result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral"));
+      Article result = await reader.Read(new Uri("http://www.anandtech.com/show/7594/samsung-ssd-840-evo-msata-120gb-250gb-500gb-1tb-review"));
+      Assert.Equal(result.NextPage.ToString(), "http://www.anandtech.com/show/7594/samsung-ssd-840-evo-msata-120gb-250gb-500gb-1tb-review/2");
+
+      result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral"));
       Assert.Equal(result.NextPage.ToString(), "http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral/seite-2");
 
       result = await reader.Read(new Uri("http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754"));
@@ -156,10 +157,14 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task AreSinglepageArticlesNotPopulatingNextPage()
     {
-      Article result = await reader.Read(new Uri("http://www.buzzfeed.com/mattlynley/the-16-most-interesting-things-to-come-out-of-bill-gates-qa"));
+      Article result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/7/"));
       Assert.Null(result.NextPage);
 
-      result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/7/"));
+      result = await reader.Read(new Uri("http://www.wpcentral.com/developers-leak-new-features-windows-phone-81-sdk"), new ReadOptions() { MultipageDownload = true });
+      Assert.Null(result.NextPage);
+      Assert.Equal(result.PageCount, 1);
+
+      result = await reader.Read(new Uri("http://www.buzzfeed.com/mattlynley/the-16-most-interesting-things-to-come-out-of-bill-gates-qa"));
       Assert.Null(result.NextPage);
 
       result = await reader.Read(new Uri("http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754-2"));
@@ -167,6 +172,7 @@ namespace ReadSharp.Tests
 
       result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral/seite-2"));
       Assert.Null(result.NextPage);
+
     }
 
     [Fact]
@@ -174,7 +180,10 @@ namespace ReadSharp.Tests
     {
       ReadOptions options = new ReadOptions() { MultipageDownload = true };
 
-      Article result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral"), options);
+      Article result = await reader.Read(new Uri("http://www.anandtech.com/show/7594/samsung-ssd-840-evo-msata-120gb-250gb-500gb-1tb-review"), options);
+      Assert.Equal(result.PageCount, 9);
+
+      result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral"), options);
       Assert.Equal(result.PageCount, 2);
       Assert.True(result.WordCount > 800);
 
@@ -228,6 +237,12 @@ namespace ReadSharp.Tests
 
       result = await reader.Read(new Uri("http://m.spiegel.de/spiegelgeschichte/a-946060.html"));
       Assert.DoesNotContain("Detecting browser settings", result.Content);
+
+      result = await reader.Read(new Uri("https://vimeo.com/84391640"));
+      Assert.Contains("twitter.com/pokiapp", result.Content);
+
+      result = await reader.Read(new Uri("http://www.youtube.com/watch?v=GI2lHSPkW1c"));
+      Assert.Contains("IT PAST MIDNIGHT A COUPLE HOURS AGO, IT'S FEELS COLDER", result.Content);
     }
 
 
