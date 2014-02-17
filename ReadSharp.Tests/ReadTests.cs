@@ -180,7 +180,10 @@ namespace ReadSharp.Tests
     {
       ReadOptions options = new ReadOptions() { MultipageDownload = true };
 
-      Article result = await reader.Read(new Uri("http://www.anandtech.com/show/7594/samsung-ssd-840-evo-msata-120gb-250gb-500gb-1tb-review"), options);
+      Article result = await reader.Read(new Uri("http://www.maximumpc.com/article/features/modders_toolkit_everything_you_need_make_kick-ass_custom_case_mods"), options);
+      Assert.Equal(result.PageCount, 4);
+
+      result = await reader.Read(new Uri("http://www.anandtech.com/show/7594/samsung-ssd-840-evo-msata-120gb-250gb-500gb-1tb-review"), options);
       Assert.Equal(result.PageCount, 9);
 
       result = await reader.Read(new Uri("http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral"), options);

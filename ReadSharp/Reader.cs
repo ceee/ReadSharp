@@ -40,6 +40,11 @@ namespace ReadSharp
     protected HttpOptions _options;
 
     /// <summary>
+    /// The current pages
+    /// </summary>
+    protected List<string> _currentPages = new List<string>();
+
+    /// <summary>
     /// Redirect faulty mobile URIs to desktop equivalents
     /// </summary>
     private static readonly Dictionary<string, string> _redirectFaultyMobileURIs = new Dictionary<string, string>
@@ -118,6 +123,8 @@ namespace ReadSharp
     /// <exception cref="OperationCanceledException"></exception>
     public async Task<Article> Read(Uri uri, ReadOptions options = null, CancellationToken cancellationToken = default(CancellationToken))
     {
+      _currentPages = new List<string>();
+
       Response response;
       string uriString = uri.OriginalString;
 
@@ -274,6 +281,13 @@ namespace ReadSharp
     /// </exception>
     private async Task<Response> Request(Uri uri, ReadOptions options, Response previousResponse, CancellationToken cancellationToken)
     {
+      // URI already fetched
+      if (previousResponse != null && _currentPages.Contains(uri.OriginalString))
+      {
+        return previousResponse;
+      }
+      _currentPages.Add(uri.OriginalString);
+
       HttpResponseMessage response = null;
       TranscodingResult transcodingResult;
       Encoding encoding;
@@ -354,7 +368,7 @@ namespace ReadSharp
 
       // in same special cases their are multiple pages, which are only comments or do not contain new content.
       // if this is the case we will break here and return the first page only.
-      if (previousResponse != null && previousResponse.TranscodingResult.ExtractedContent == transcodingResult.ExtractedContent)
+      if (previousResponse != null && previousResponse.TranscodingResult.ExtractedContent.Contains(transcodingResult.ExtractedContent))
       {
         previousResponse.TranscodingResult.NextPageUrl = null;
         return previousResponse;
