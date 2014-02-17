@@ -35,6 +35,11 @@ namespace ReadSharp
     protected NReadabilityTranscoder _transcoder;
 
     /// <summary>
+    /// The HTTP options
+    /// </summary>
+    protected HttpOptions _options;
+
+    /// <summary>
     /// Redirect faulty mobile URIs to desktop equivalents
     /// </summary>
     private static readonly Dictionary<string, string> _redirectFaultyMobileURIs = new Dictionary<string, string>
@@ -65,6 +70,8 @@ namespace ReadSharp
       {
         options = HttpOptions.CreateDefault();
       }
+
+      _options = options;
 
       // initialize custom encoder
       _encoder = new Encodings.Encoder(true);
@@ -133,10 +140,9 @@ namespace ReadSharp
 
       // get images from article
       int id = 1;
-
-      List<ArticleImage> images = response.TranscodingResult.Images.Select<XElement, ArticleImage>(image =>
+      List<ArticleImage> images = response.TranscodingResult.Images.Select(image =>
       {
-        Uri imageUri;
+        Uri imageUri = null;
         Uri.TryCreate(image.GetAttributeValue("src", null), UriKind.Absolute, out imageUri);
 
         return new ArticleImage()
@@ -146,7 +152,7 @@ namespace ReadSharp
           Title = image.GetAttributeValue("title", null),
           AlternativeText = image.GetAttributeValue("alt", null)
         };
-      }).ToList();
+      }).GroupBy(image => image.Uri).Select(g => g.First()).Where(image => image.Uri != null).ToList();
 
       // get word count and plain text
       string plainContent;
@@ -349,7 +355,7 @@ namespace ReadSharp
       // multiple pages are available
       try
       {
-        if (options.MultipageDownload && transcodingResult.NextPageUrl != null && (previousResponse == null || (previousResponse != null && previousResponse.PageCount < 10)))
+        if (options.MultipageDownload && transcodingResult.NextPageUrl != null && (previousResponse == null || (previousResponse != null && previousResponse.PageCount < _options.MultipageLimit)))
         {
           return await Request(new Uri(transcodingResult.NextPageUrl), new ReadOptions()
           {
