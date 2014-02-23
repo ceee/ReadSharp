@@ -235,7 +235,10 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task TestCriticalURIs2()
     {
-      Article result = await reader.Read(new Uri("http://www.dgtle.com/article-5682-1.html"));
+      Article result = await reader.Read(new Uri("https://medium.com/best-thing-i-found-online-today/9e7455ca375b"));
+      Assert.Contains("16. Be confident in how you ask", result.Content);
+
+      result = await reader.Read(new Uri("http://www.dgtle.com/article-5682-1.html"));
       Assert.Contains("http://img.dgtle.com/forum/201402/13/162237x8oumb8i0i0y0087.jpeg!680px", result.Content);
 
       result = await reader.Read(new Uri("http://m.spiegel.de/spiegelgeschichte/a-946060.html"));
@@ -246,6 +249,7 @@ namespace ReadSharp.Tests
 
       result = await reader.Read(new Uri("http://www.youtube.com/watch?v=GI2lHSPkW1c"));
       Assert.Contains("IT PAST MIDNIGHT A COUPLE HOURS AGO, IT'S FEELS COLDER", result.Content);
+
     }
 
 

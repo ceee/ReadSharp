@@ -141,6 +141,7 @@ namespace ReadSharp.Ports.NReadability
       { new Regex("^https?://(www|mobile)\\.theverge.com", RegexOptions.IgnoreCase), ".entry-body" },
       { new Regex("^https?://(www|blog)\\.bufferapp.com", RegexOptions.IgnoreCase), ".post" },
       { new Regex("^https?://(www.)?polygon.com", RegexOptions.IgnoreCase), ".body" },
+      { new Regex("^https?://(www.)?medium.com", RegexOptions.IgnoreCase), ".body" },
       { new Regex("^https?://(www.)?gizmodo.com", RegexOptions.IgnoreCase), ".post-container" },
       { new Regex("^https?://(www.)?it-scoop.com", RegexOptions.IgnoreCase), ".entry-content" },
       { new Regex("^https?://(m\\.|www\\.)?youtube.com", RegexOptions.IgnoreCase), "#watch-description-content" },
