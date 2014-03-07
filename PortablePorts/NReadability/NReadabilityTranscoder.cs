@@ -145,7 +145,8 @@ namespace ReadSharp.Ports.NReadability
       { new Regex("^https?://(www.)?it-scoop.com", RegexOptions.IgnoreCase), ".entry-content" },
       { new Regex("^https?://(m\\.|www\\.)?youtube.com", RegexOptions.IgnoreCase), "#watch-description-content" },
       { new Regex("^https?://(www.)?vimeo.com", RegexOptions.IgnoreCase), ".description_wrapper" },
-      { new Regex("^https?://(www.)?zdnet.com", RegexOptions.IgnoreCase), ".storyBody" }
+      { new Regex("^https?://(www.)?zdnet.com", RegexOptions.IgnoreCase), ".storyBody" },
+      { new Regex("^https?://(www.)?recode.net", RegexOptions.IgnoreCase), ".postarea" }
     };
 
     #endregion
