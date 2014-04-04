@@ -987,7 +987,7 @@ namespace ReadSharp.Ports.NReadability
 
       styleElement.SetAttributeValue("type", "text/css");
 
-      Stream readabilityStylesheetStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(_ReadabilityStylesheetResourceName);
+      Stream readabilityStylesheetStream = typeof(NReadabilityTranscoder).GetTypeInfo().Assembly.GetManifestResourceStream(_ReadabilityStylesheetResourceName);
 
       if (readabilityStylesheetStream == null)
       {

@@ -1,15 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadSharp", "ReadSharp\ReadSharp.csproj", "{06219CAD-E85E-48E2-A216-2539805A9EE8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReadability", "PortablePorts\NReadability\NReadability.csproj", "{14C3EE6A-54A4-4A37-8B56-D52A3802F1C2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SgmlReader", "PortablePorts\SgmlReader\SgmlReader.csproj", "{9112414C-E2D1-43BA-A298-A89F77D94332}"
-EndProject
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30324.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PortablePorts", "PortablePorts", "{82F79DE3-76D7-4FCB-AA7E-16BA7E363E0D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadSharp.Tests", "ReadSharp.Tests\ReadSharp.Tests.csproj", "{21E0B36F-4829-4044-A7D4-8C27F1D16FB2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{43FC7986-6B67-4FD2-8508-097A90A8BBDC}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,6 +11,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{43FC79
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadSharp", "ReadSharp\ReadSharp.csproj", "{06219CAD-E85E-48E2-A216-2539805A9EE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReadability", "PortablePorts\NReadability\NReadability.csproj", "{14C3EE6A-54A4-4A37-8B56-D52A3802F1C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SgmlReader", "PortablePorts\SgmlReader\SgmlReader.csproj", "{9112414C-E2D1-43BA-A298-A89F77D94332}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadSharp.Tests", "ReadSharp.Tests\ReadSharp.Tests.csproj", "{21E0B36F-4829-4044-A7D4-8C27F1D16FB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

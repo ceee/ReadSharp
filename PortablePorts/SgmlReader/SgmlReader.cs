@@ -469,7 +469,7 @@ namespace ReadSharp.Ports.Sgml
         {
           if (this.m_docType != null && StringUtilities.EqualsIgnoreCase(this.m_docType, "html"))
           {
-            Assembly a = Assembly.GetExecutingAssembly();
+            Assembly a = typeof(SgmlReader).GetTypeInfo().Assembly;
             string name = a.FullName.Split(',')[0] + ".Html.dtd";
             Stream stm = a.GetManifestResourceStream(name);
             if (stm != null)

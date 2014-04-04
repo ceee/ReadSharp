@@ -102,7 +102,7 @@ namespace ReadSharp
       // add user agent
       string userAgent = options.UseMobileUserAgent ? options.UserAgentMobile : options.UserAgent;
 
-      string version = Assembly.GetExecutingAssembly().FullName.Split(',')[1].Split('=')[1];
+      string version = typeof(Reader).GetTypeInfo().Assembly.FullName.Split(',')[1].Split('=')[1];
 
       _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", String.Format(userAgent, "; ReadSharp/" + version));
     }

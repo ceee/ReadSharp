@@ -10,7 +10,7 @@ namespace ReadSharp.Ports.NReadability
 
     static Consts()
     {
-      _nReadabilityFullName = string.Format("NReadability {0}", Assembly.GetExecutingAssembly().FullName);
+      _nReadabilityFullName = string.Format("NReadability {0}", typeof(Consts).GetTypeInfo().Assembly.FullName);
     }
     
     #endregion
