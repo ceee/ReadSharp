@@ -1,3 +1,14 @@
+### 6.0.0
+
+- Support for Universal apps (dropped SL and WP7 support)
+
+### 5.0.0
+
+- HttpOptions for better control over the request
+- More reliable scraping of images
+- Remove unnecessary attributes from tags
+- Allow parsing of multi-page articles
+
 ### 4.2.3
 
 - add PrettyPrint option
