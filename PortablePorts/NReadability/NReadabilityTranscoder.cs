@@ -1006,33 +1006,17 @@ namespace ReadSharp.Ports.NReadability
 
       documentBody.SetClass(readingStyleClass);
       documentBody.SetStyle("display: block;");
-
-      /* Create inner div. */
-      var innerDiv = new XElement("div");
-
-      innerDiv.SetId(InnerDivId);
-      innerDiv.SetClass(GetReadingMarginClass(_readingMargin) + " " + GetReadingSizeClass(_readingSize));
+      documentBody.RemoveAll();
 
       if (articleTitleElement != null)
       {
-        innerDiv.Add(articleTitleElement);
+        documentBody.Add(articleTitleElement);
       }
 
       if (articleContentElement != null)
       {
-        innerDiv.Add(articleContentElement);
+        documentBody.Add(articleContentElement);
       }
-
-      /* Create overlay div. */
-      var overlayDiv = new XElement("div");
-
-      overlayDiv.SetId(OverlayDivId);
-      overlayDiv.SetClass(readingStyleClass);
-      overlayDiv.Add(innerDiv);
-
-      /* Clear the old HTML, insert the new content. */
-      documentBody.RemoveAll();
-      documentBody.Add(overlayDiv);
     }
 
     internal void StripUnlikelyCandidates(XDocument document)
