@@ -87,7 +87,7 @@ namespace ReadSharp
     /// <value>
     /// The images.
     /// </value>
-    public List<ArticleImage> Images { get; set; }
+    public IEnumerable<ArticleImage> Images { get; set; }
 
     /// <summary>
     /// Gets or sets the next page URL.

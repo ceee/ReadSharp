@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Xunit;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace ReadSharp.Tests
 {
@@ -9,8 +11,7 @@ namespace ReadSharp.Tests
     private Reader reader;
 
 
-    public ReadTests()
-      : base()
+    public ReadTests() : base()
     {
       reader = new Reader();
     }
@@ -44,9 +45,10 @@ namespace ReadSharp.Tests
     public async Task ReadArticleWithImagesTest()
     {
       Article result = await reader.Read(new Uri("https://hacks.mozilla.org/2013/12/application-layout-with-css3-flexible-box-module/"));
-      Assert.True(result.Images.Count >= 3);
-      Assert.True(result.Images[0].Uri.ToString().StartsWith("https://hacks.mozilla.org"));
-      Assert.True(result.Images[1].Uri.ToString().EndsWith(".gif"));
+      List<ArticleImage> images = result.Images.ToList();
+      Assert.True(images.Count >= 3);
+      Assert.True(images[0].Uri.ToString().StartsWith("https://hacks.mozilla.org"));
+      Assert.True(images[1].Uri.ToString().EndsWith(".gif"));
     }
 
 
@@ -54,7 +56,7 @@ namespace ReadSharp.Tests
     public async Task ReadArticleWithNoImagesTest()
     {
       Article result = await reader.Read(new Uri("http://getpocket.com/hits/awards/2013/"));
-      Assert.True(result.Images == null || result.Images.Count < 1);
+      Assert.True(result.Images == null || result.Images.Count() < 1);
     }
 
 
@@ -195,7 +197,7 @@ namespace ReadSharp.Tests
 
       result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/"), options);
       Assert.Equal(result.PageCount, 7);
-      Assert.True(result.WordCount > 13000 && result.Images.Count > 10);
+      Assert.True(result.WordCount > 13000 && result.Images.Count() > 10);
 
       result = await reader.Read(new Uri("http://www.sueddeutsche.de/wirtschaft/netzbetreiber-und-die-energiewende-im-kampf-gegen-blackouts-und-buergerproteste-1.1880754"), options);
       Assert.Equal(result.PageCount, 2);
@@ -217,10 +219,10 @@ namespace ReadSharp.Tests
       Assert.NotEmpty(result.Content);
 
       result = await reader.Read(new Uri("http://www.nytimes.com/2014/01/31/world/europe/ukraine-unrest.html?hp&_r=0"));
-      Assert.True(result.Images != null && result.Images.Count > 0);
+      Assert.True(result.Images != null && result.Images.Count() > 0);
 
       result = await reader.Read(new Uri("http://www.polygon.com/2013/2/25/4026668/tomb-raider-review"));
-      Assert.True(result.Images != null && result.Images.Count > 3 && result.Content.Contains("For a reboot of a series that had lost its focus and purpose"));
+      Assert.True(result.Images != null && result.Images.Count() > 3 && result.Content.Contains("For a reboot of a series that had lost its focus and purpose"));
 
       result = await reader.Read(new Uri("http://www.polygon.com/2014/1/31/5364728/super-bowl-xlviii-xbox-activities-new-york"));
       Assert.True(result.Content.Contains("week for Super Bowl XLVIII") && result.Content.Contains("two tickets to the Super Bowl."));

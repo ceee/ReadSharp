@@ -147,19 +147,23 @@ namespace ReadSharp
 
       // get images from article
       int id = 1;
-      List<ArticleImage> images = response.TranscodingResult.Images.Select(image =>
-      {
-        Uri imageUri = null;
-        Uri.TryCreate(image.GetAttributeValue("src", null), UriKind.Absolute, out imageUri);
-
-        return new ArticleImage()
+      IEnumerable<ArticleImage> images = response.TranscodingResult.Images
+        .Select(image =>
         {
-          ID = (id++).ToString(),
-          Uri = imageUri,
-          Title = image.GetAttributeValue("title", null),
-          AlternativeText = image.GetAttributeValue("alt", null)
-        };
-      }).GroupBy(image => image.Uri).Select(g => g.First()).Where(image => image.Uri != null).ToList();
+          Uri imageUri = null;
+          Uri.TryCreate(image.GetAttributeValue("src", null), UriKind.Absolute, out imageUri);
+
+          return new ArticleImage()
+          {
+            ID = (id++).ToString(),
+            Uri = imageUri,
+            Title = image.GetAttributeValue("title", null),
+            AlternativeText = image.GetAttributeValue("alt", null)
+          };
+        })
+        .GroupBy(image => image.Uri)
+        .Select(g => g.First())
+        .Where(image => image.Uri != null);
 
       // get word count and plain text
       string plainContent;
