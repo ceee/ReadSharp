@@ -45,6 +45,11 @@ namespace ReadSharp
     protected List<string> _currentPages = new List<string>();
 
     /// <summary>
+    /// The raw HTML from the last request
+    /// </summary>
+    private string _rawHTML = String.Empty;
+
+    /// <summary>
     /// Redirect faulty mobile URIs to desktop equivalents
     /// </summary>
     private static readonly Dictionary<string, string> _redirectFaultyMobileURIs = new Dictionary<string, string>
@@ -186,6 +191,7 @@ namespace ReadSharp
         Description = response.TranscodingResult.ExtractedDescription,
         Content = response.TranscodingResult.ExtractedContent,
         ContentExtracted = response.TranscodingResult.ContentExtracted ? wordCount > 0 : false,
+        Raw = _rawHTML,
         PlainContent = plainContent,
         WordCount = wordCount,
         PageCount = response.PageCount,
@@ -216,10 +222,10 @@ namespace ReadSharp
       // response stream to text
       textStream.Position = 0;
       StreamReader streamReader = new StreamReader(textStream, encoding ?? Encoding.UTF8);
-      string text = streamReader.ReadToEnd();
+      _rawHTML = streamReader.ReadToEnd();
 
       // set properties for processing
-      TranscodingInput transcodingInput = new TranscodingInput(text)
+      TranscodingInput transcodingInput = new TranscodingInput(_rawHTML)
       {
         Url = uri.ToString(),
         DomSerializationParams = new DomSerializationParams()

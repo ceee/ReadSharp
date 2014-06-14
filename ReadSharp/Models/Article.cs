@@ -42,6 +42,14 @@ namespace ReadSharp
     public bool ContentExtracted { get; set; }
 
     /// <summary>
+    /// Gets or sets the raw HTML.
+    /// </summary>
+    /// <value>
+    /// The raw HTML.
+    /// </value>
+    public string Raw { get; set; }
+
+    /// <summary>
     /// Plain content without HTML tags.
     /// </summary>
     /// <value>
