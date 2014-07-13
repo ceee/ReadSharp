@@ -43,6 +43,11 @@ namespace ReadSharp.Ports.NReadability
     public bool DontIncludeGeneratorMetaElement { get; set; }
 
     /// <summary>
+    /// If [true], replace all img-tags with placeholders.
+    /// </summary>
+    public bool ReplaceImagesWithPlaceholders { get; set; }
+
+    /// <summary>
     /// Render complete Website or only the Body
     /// </summary>
     public bool BodyOnly { get; set; }

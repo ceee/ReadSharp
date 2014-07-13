@@ -53,6 +53,23 @@ namespace ReadSharp.Tests
 
 
     [Fact]
+    public async Task ReadArticleWithImagePlaceholdersTest()
+    {
+      ReadOptions options = ReadOptions.CreateDefault();
+      options.ReplaceImagesWithPlaceholders = true;
+      Article result = await reader.Read(new Uri("https://hacks.mozilla.org/2013/12/application-layout-with-css3-flexible-box-module/"), options);
+      List<ArticleImage> images = result.Images.ToList();
+
+      Assert.True(images.Count >= 3);
+      Assert.True(images[0].Uri.ToString().StartsWith("https://hacks.mozilla.org"));
+      Assert.True(images[1].Uri.ToString().EndsWith(".gif"));
+
+      Assert.Contains("<!--IMG_1-->", result.Content);
+      Assert.DoesNotContain("<img ", result.Content);
+    }
+
+
+    [Fact]
     public async Task ReadArticleWithNoImagesTest()
     {
       Article result = await reader.Read(new Uri("http://getpocket.com/hits/awards/2013/"));

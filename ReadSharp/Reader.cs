@@ -165,10 +165,10 @@ namespace ReadSharp
             Title = image.GetAttributeValue("title", null),
             AlternativeText = image.GetAttributeValue("alt", null)
           };
-        })
-        .GroupBy(image => image.Uri)
-        .Select(g => g.First())
-        .Where(image => image.Uri != null);
+        });
+        //.GroupBy(image => image.Uri)
+        //.Select(g => g.First())
+        //.Where(image => image.Uri != null);
 
       // get word count and plain text
       string plainContent;
@@ -236,7 +236,8 @@ namespace ReadSharp
           DontIncludeContentTypeMetaElement = true,
           DontIncludeMobileSpecificMetaElements = true,
           DontIncludeDocTypeMetaElement = false,
-          DontIncludeGeneratorMetaElement = true
+          DontIncludeGeneratorMetaElement = true,
+          ReplaceImagesWithPlaceholders = options.ReplaceImagesWithPlaceholders
         }
       };
 

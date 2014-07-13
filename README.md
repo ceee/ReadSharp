@@ -51,8 +51,11 @@ You can pass `HttpOptions` to the `Reader` constructor, which count for all requ
 
 - `HttpMessageHandler` **CustomHttpHandler**<br>Use your own HTTP handler
 - `int?` **RequestTimeout**<br>Define a custom timeout _in seconds_, after which requests should cancel
+- `bool` **UseMobileUserAgent**<br>Gets or sets a value indicating whether [use mobile user agent]
 - `string` **UserAgent**<br>Override the user agent, which is passed to the destination server
+- `string` **UserAgentMobile**<br>Override the mobile user agent, which is passed to the destination server
 - `bool` **UseMobileUserAgent**<br>There are desktop and mobile default user agents. By enabling this property, the mobile user agent is used. _If you pass a custom user agent, this property is ignored!_
+- `int` **MultipageLimit**<br>Gets or sets the download limit for articles with multiple pages (default: 10)
 
 ### ReadOptions
 
@@ -62,6 +65,8 @@ There are also `ReadOptions` available, which are passed on every request:
 - `bool` **HasNoHeadline**<br>Removes `<h1>` title from the article
 - `bool` **UseDeepLinks**<br>If you check this option, deep-links (containing hashes, e.g. `href="#article"`) are not transformed into absolute URIs
 - `bool` **PrettyPrint**<br>Determines whether the HTML output will be formatted
+- `bool` **MultipageDownload**<br>Download all pages for articles with multiple pages (default: false)
+- `bool` **ReplaceImagesWithPlaceholders**<br>If true, replace all img-tags with placeholders
 
 ## Article Model
 

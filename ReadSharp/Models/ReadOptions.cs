@@ -44,6 +44,11 @@ namespace ReadSharp
     public bool MultipageDownload { get; set; }
 
     /// <summary>
+    /// If true, replace all img-tags with placeholders.
+    /// </summary>
+    public bool ReplaceImagesWithPlaceholders { get; set; }
+
+    /// <summary>
     /// Creates the default options.
     /// </summary>
     /// <returns></returns>
@@ -55,7 +60,8 @@ namespace ReadSharp
         HasHeadline = false,
         UseDeepLinks = false,
         PrettyPrint = false,
-        MultipageDownload = false
+        MultipageDownload = false,
+        ReplaceImagesWithPlaceholders = false
       };
     }
   }

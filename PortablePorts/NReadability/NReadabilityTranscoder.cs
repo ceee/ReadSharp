@@ -253,6 +253,14 @@ namespace ReadSharp.Ports.NReadability
           out nextPageUrl);
 
       IEnumerable<XElement> images = transcodedXmlDocument.GetElementsByTagName("img");
+      List<XElement> realImages = images.ToList();
+
+      if (transcodingInput.DomSerializationParams.ReplaceImagesWithPlaceholders)
+      {
+        int i = 1;
+        images.ForEach(ximage => ximage.AddAfterSelf(new XComment("IMG_" + (i++))));
+        images.Remove();
+      }
 
       string transcodedContent =
         _sgmlDomSerializer.SerializeDocument(
@@ -297,7 +305,7 @@ namespace ReadSharp.Ports.NReadability
             ExtractedImage = image,
             NextPageUrl = nextPageUrl,
             Charset = charset,
-            Images = images
+            Images = realImages
           };
     }
 
