@@ -1,3 +1,11 @@
+### 6.2.0
+
+- Option to replace images with placeholders
+
+### 6.1.0
+
+- Add RAW HTML content to Article
+
 ### 6.0.0
 
 - Support for Universal apps (dropped SL and WP7 support)
