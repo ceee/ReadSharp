@@ -176,12 +176,12 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task AreSinglepageArticlesNotPopulatingNextPage()
     {
-      Article result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/7/"));
-      Assert.Null(result.NextPage);
-
-      result = await reader.Read(new Uri("http://www.wpcentral.com/developers-leak-new-features-windows-phone-81-sdk"), new ReadOptions() { MultipageDownload = true });
+      Article result = await reader.Read(new Uri("http://www.wpcentral.com/developers-leak-new-features-windows-phone-81-sdk"), new ReadOptions() { MultipageDownload = true });
       Assert.Null(result.NextPage);
       Assert.Equal(result.PageCount, 1);
+
+      result = await reader.Read(new Uri("http://arstechnica.com/apple/2014/01/two-steps-forward-a-review-of-the-2013-mac-pro/7/"));
+      Assert.Null(result.NextPage);
 
       result = await reader.Read(new Uri("http://www.buzzfeed.com/mattlynley/the-16-most-interesting-things-to-come-out-of-bill-gates-qa"));
       Assert.Null(result.NextPage);

@@ -92,6 +92,9 @@ namespace ReadSharp.Ports.NReadability
 
     private static XDocument LoadDocument(string htmlContent)
     {
+      // I should not really do this, but I <3 WPCentral
+      htmlContent = htmlContent.Replace("src=\"javascript:'<html  ><head  ></head  ><body  ></body  ></html  >'\"", "");
+
       using (var sgmlReader = new SgmlReader())
       {
         sgmlReader.CaseFolding = CaseFolding.ToLower;
