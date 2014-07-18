@@ -1,3 +1,7 @@
+### 6.2.2
+
+- Option (`PreferHTMLEncoding`) to either prefer HTML or HTTP encoding for generating content
+
 ### 6.2.0
 
 - Option to replace images with placeholders

@@ -254,6 +254,8 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task TestCriticalURIs2()
     {
+      ReadOptions options;
+
       Article result = await reader.Read(new Uri("https://medium.com/best-thing-i-found-online-today/9e7455ca375b"));
       Assert.Contains("16. Be confident in how you ask", result.Content);
 
@@ -269,6 +271,13 @@ namespace ReadSharp.Tests
       result = await reader.Read(new Uri("http://www.youtube.com/watch?v=GI2lHSPkW1c"));
       Assert.Contains("IT PAST MIDNIGHT A COUPLE HOURS AGO, IT'S FEELS COLDER", result.Content);
 
+      result = await reader.Read(new Uri("http://www.jn.pt/PaginaInicial/Politica/Interior.aspx?content_id=3996648&utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+JN-ULTIMAS+%28JN+-+Ultimas%29"));
+      Assert.DoesNotContain("Alberto João Jardim", result.Content);
+
+      options = ReadOptions.CreateDefault();
+      options.PreferHTMLEncoding = false;
+      result = await reader.Read(new Uri("http://www.jn.pt/PaginaInicial/Politica/Interior.aspx?content_id=3996648&utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+JN-ULTIMAS+%28JN+-+Ultimas%29"), options);
+      Assert.Contains("Alberto João Jardim", result.Content);
     }
 
 

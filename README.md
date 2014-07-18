@@ -65,6 +65,7 @@ There are also `ReadOptions` available, which are passed on every request:
 - `bool` **HasNoHeadline**<br>Removes `<h1>` title from the article
 - `bool` **UseDeepLinks**<br>If you check this option, deep-links (containing hashes, e.g. `href="#article"`) are not transformed into absolute URIs
 - `bool` **PrettyPrint**<br>Determines whether the HTML output will be formatted
+- `bool` **PreferHTMLEncoding**<br> Determines whether to prefer the encoding found in the HTML or the one found in the HTTP Header (default: true)
 - `bool` **MultipageDownload**<br>Download all pages for articles with multiple pages (default: false)
 - `bool` **ReplaceImagesWithPlaceholders**<br>If true, replace all img-tags with placeholders
 

@@ -36,6 +36,14 @@ namespace ReadSharp
     public bool PrettyPrint { get; set; }
 
     /// <summary>
+    /// Determines whether to prefer the encoding found in the HTML or the one found in the HTTP Header (default: true).
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [prefer HTML encoding]; otherwise, <c>false</c>.
+    /// </value>
+    public bool PreferHTMLEncoding { get; set; }
+
+    /// <summary>
     /// Download all pages for articles with multiple pages (default: false).
     /// </summary>
     /// <value>
@@ -60,6 +68,7 @@ namespace ReadSharp
         HasHeadline = false,
         UseDeepLinks = false,
         PrettyPrint = false,
+        PreferHTMLEncoding = true,
         MultipageDownload = false,
         ReplaceImagesWithPlaceholders = false
       };

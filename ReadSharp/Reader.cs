@@ -349,15 +349,15 @@ namespace ReadSharp
         transcodingResult = ExtractReadableInformation(uri, responseStream, options, encoding);
 
         // get encoding found in HTML
-        encoding = _encoder.GetEncodingFromString(transcodingResult.Charset);
+        Encoding encodingFromHTML = _encoder.GetEncodingFromString(transcodingResult.Charset);
 
         // extract again if encoding didn't match or failed to retrieve
-        if (encoding != null && (
-          String.IsNullOrEmpty(charset)
+        if ((encoding != null && String.IsNullOrEmpty(charset))
           ||
-          !String.Equals(charset, transcodingResult.Charset, StringComparison.OrdinalIgnoreCase)))
+          (options.PreferHTMLEncoding && !String.Equals(charset, transcodingResult.Charset, StringComparison.OrdinalIgnoreCase)))
         {
-          transcodingResult = ExtractReadableInformation(uri, responseStream, options, encoding);
+          transcodingResult = ExtractReadableInformation(uri, responseStream, options, encodingFromHTML);
+          encoding = encodingFromHTML;
         }
       }
       catch (Exception exc)
