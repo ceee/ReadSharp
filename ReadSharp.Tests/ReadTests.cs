@@ -284,13 +284,13 @@ namespace ReadSharp.Tests
     [Fact]
     public async Task DebugArticle()
     {
-      string uri = "http://www.zeit.de/gesellschaft/2014-02/alice-schwarzer-steuerhinterziehung-doppelmoral";
+      string uri = "http://nstarikov.ru/blog/45260";
 
       Article result = await reader.Read(new Uri(uri), new ReadOptions()
       {
         MultipageDownload = true
       });
-      Assert.Equal(result.PageCount, 2);
+      Assert.Equal(true, result.ContentExtracted);
     }
   }
 }
