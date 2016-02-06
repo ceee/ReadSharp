@@ -92,6 +92,7 @@ The `Article` contains following fields:
 ReadSharp is a **Portable Class Library**, therefore it's compatible with multiple platforms and Universal Apps:
 
 - **.NET** >= 4.5 (including WPF)
+- **UWP**
 - **Windows Phone** (Silverlight + WinPRT) >= 8
 - **Windows Store** >= 8
 - **Xamarin** iOS + Android
